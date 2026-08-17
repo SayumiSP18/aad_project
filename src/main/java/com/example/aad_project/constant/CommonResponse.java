@@ -1,4 +1,4 @@
-package com.example.aad_project.dto;
+package com.example.aad_project.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
