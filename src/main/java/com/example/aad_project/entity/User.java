@@ -18,18 +18,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
 
-    @Column(unique = true, nullable = false)
+//    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String password;
 
-    private String email;
-    private String phone;
+//    private String email;
+//    private String phone;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    private Role userRole;
 
-    private LocalDateTime createdAt;
+//    private LocalDateTime createdAt;
 }
