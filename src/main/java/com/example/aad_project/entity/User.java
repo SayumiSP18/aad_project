@@ -29,7 +29,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private Role userRole;
+    private Role userRoles;
 
 //    private LocalDateTime createdAt;
 }

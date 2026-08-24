@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(404,"User not found");
 
         User user = optionalUser.get();
-        return new UserDTO(user.getUserId(),user.getUserName(),user.getUserRoles(),user.getPassword());
+        return new UserDTO(user.getUserId(),user.getUsername(),user.getUserRole(),user.getPassword());
 
     }
 
@@ -34,13 +34,13 @@ public class UserServiceImpl implements UserService {
     public void saveUser(UserDTO userDTO) {
 
         if(userDTO.getUserRoles().equals(""))
-            throw new CustomerException(404,"User Role cannot be empty");
+            throw new CustomException(404,"User Role cannot be empty");
 
         User user = new User();
 
-        user.setUserName(userDTO.getUsername());
+        user.setUsername(userDTO.getUsername());
         user.setPassword(userDTO.getPassword());
-        user.setUserRoles(userDTO.getUserRoles());
+        user.setUserRoles(userDTO.getUserRole());
 
         userRepository.save(user);
     }
@@ -72,8 +72,8 @@ public class UserServiceImpl implements UserService {
 
         User user = optionalUser.get();
 
-        user.setUserName(userDTO.getUsername());
-        user.setUserRoles(userDTO.getUserRoles());
+        user.setUsername(userDTO.getUsername());
+        user.setUserRoles(userDTO.getUserRole());
 
         userRepository.save(user);
 

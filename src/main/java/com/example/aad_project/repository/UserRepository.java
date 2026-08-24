@@ -16,15 +16,15 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByUserName(String username);
 
-    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.userName,u.userRoles) " +
+    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.username,u.userRole) " +
             "FROM User u")
     List<UserDTO> getAllUsers();
 
-    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.userName,u.userRoles) " +
+    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.username,u.userRole) " +
             "FROM User u " +
-            "WHERE (?1 IS NULL OR u.userName LIKE %?1%)")
+            "WHERE (?1 IS NULL OR u.username LIKE %?1%)")
     List<UserDTO> filterUser(String username);
 
-    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.userName,u.userRoles) " +
+    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.username,u.userRole) " +
             "FROM User u WHERE u.userId=?1")
     UserDTO selectUser(long userId);}
