@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+  <script src ="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h4>Filter</h4>
+<label>Search by Username</label>
+<input type="text" name="searchUsername" id="searchUsername">
+<button type="button" onclick="searchUsers()">Search</button>
+<button type="button" onclick="clearTable()">Clear</button>
+
+<h2>User Table</h2>
+
+<table border="2pt" id="userTbl">
+  <thead>
+  <th>User ID</th>
+  <th>User name</th>
+  <th>User Role</th>
+  <th>Action</th>
+  </thead>
+
+  <tbody id="userTblBody">
+
+  </tbody>
+
+</table>
+
+<br>
+
+<h3>User Details</h3>
+
+<label> User Id </label><br>
+<input type="text" id="userIdTxt" name="userId" disabled><br>
+<label> User Name </label><br>
+<input type="text" id="userNameTxt" name="userName"><br>
+<label> Roles </label><br>
+<input type="text" id="userRolesTxt" name="userRoles"><br><br>
+<button type="button" onclick="updateUser()">Update</button>
+
+
+
+<script>
+
+  function updateUser(){
+    let userId = $('#userIdTxt').val();
+    let userName = $('#userNameTxt').val();
+    let userRoles = $('#userRolesTxt').val();
+
+    const obj = JSON.stringify({"userId":userId,"username":userName,"userRoles":userRoles});
+
+    $.ajax({
+      url:"http://localhost:8080/v1/test/update-user",
+      type:"PUT",
+      contentType:"application/json",
+      headers:{
+        'Authorization': 'Bearer '+localStorage.getItem("JWT")
+      },
+      data:obj,
+      success:function (response){
+        alert(response.message);
+      }
+    })
+  }
+
+  function selectUser(userId){
+    $.ajax({
+      url:"http://localhost:8080/v1/test/select-user/"+userId,
+      type:"GET",
+      contentType:"application/json",
+      headers:{
+        'Authorization': 'Bearer '+localStorage.getItem("JWT")
+      },
+      success:function (response){
+        $('#userIdTxt').val(response.body.userId);
+        $('#userNameTxt').val(response.body.username);
+        $('#userRolesTxt').val(response.body.userRoles);
+      }
+    })
+
+  }
+
+  console.log(localStorage.getItem("JWT"));
+
+  $.ajax({
+    url:"http://localhost:8080/v1/test/users",
+    type:"GET",
+    contentType:"application/json",
+    headers:{
+      'Authorization':'Bearer '+localStorage.getItem("JWT")
+    },
+    success:function (response){
+      let html = "";
+      for (const responseElement of response.body) {
+        html += `<tr> <td id="userId">${responseElement.userId}</td>
+<td>${responseElement.username}</td>
+<td>${responseElement.userRoles}</td>
+<td><button type="button" onclick="deleteUser(${responseElement.userId})">Delete</button></td>
+<td><button type="button" onclick="selectUser(${responseElement.userId})">Edit</button></td></tr>`
+      }
+
+      $('#userTblBody').html(html);
+    }
+  });
+
+  function deleteUser(userId){
+    console.log(userId);
+    $.ajax({
+      url:"http://localhost:8080/v1/test/"+userId,
+      type:"DELETE",
+      contentType:"application/json",
+      headers:{
+        'Authorization':'Bearer '+localStorage.getItem("JWT")
+      },
+      success:function (response){
+        alert("User deleted successful");
+      }
+    });
+  }
+
+  function clearTable(){
+    $.ajax({
+      url:"http://localhost:8080/v1/test/users",
+      type:"GET",
+      contentType:"application/json",
+      headers:{
+        'Authorization':'Bearer '+localStorage.getItem("JWT")
+      },
+      success:function (response){
+        let html = "";
+        for (const responseElement of response.body) {
+          html += `<tr> <td id="userId">${responseElement.userId}</td>
+<td>${responseElement.username}</td>
+<td>${responseElement.userRoles}</td>
+<td><button type="button" onclick="deleteUser()">Delete</button></td>
+<td><button type="button" onclick="selectUser(${responseElement.userId},
+${responseElement.username},${responseElement.userRoles})">Edit</button></td></tr>`
+        }
+
+        $('#userTblBody').html(html);
+      }
+    });
+
+    $('#searchUsername').val("");
+  }
+
+  function searchUsers(){
+
+    let searchValue = $('#searchUsername').val();
+
+    let param = {
+      userName : searchValue
+    }
+
+    let queryParam = $.param(param);
+
+    $.ajax({
+      url: "http://localhost:8080/v1/test/filter-users?"+queryParam,
+      type: "GET",
+      contentType: "application/json",
+      headers: {
+        'Authorization':'Bearer '+localStorage.getItem("JWT")
+      },
+      success:function (response) {
+
+        let html = "";
+        for (const responseElement of response.body) {
+          html += `<tr> <td>${responseElement.userId}</td>
+<td>${responseElement.username}</td>
+<td>${responseElement.userRoles}</td>
+<td><button type="button" onclick="deleteUser()">Delete</button></td>
+<td><button type="button" onclick="selectUser(${responseElement.userId},
+${responseElement.username},${responseElement.userRoles})">Edit</button></td></tr>`
+        }
+
+        $('#userTblBody').html(html);
+
+      }
+    });
+  }
+
+
+</script>
+
+</body>
+</html>

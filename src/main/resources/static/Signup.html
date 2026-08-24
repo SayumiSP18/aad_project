@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <script src ="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>Sign up Form</h2>
+<form>
+    <label>User Name</label><br>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label>Password</label><br>
+    <input type="text" id="password_1" name="password_1" required>
+    <br>
+    <label>Confirm Password</label><br>
+    <input type="text" id="password_2" name="password_2" required>
+    <br>
+    <label>User Roles</label><br>
+    <input type="text" id="userRoles" name="userRoles" required>
+    <br>
+    <button type="button" onclick="handleSignUp()">Sign Up</button>
+</form>
+
+<script>
+
+    function handleSignUp(){
+        let username = $('#username').val().trim();
+        let password_1 = $('#password_1').val().trim();
+        let password_2 = $('#password_2').val().trim();
+        let userRoles = $('#userRoles').val();
+
+        if(password_1==="" || password_1!==password_2){
+            alert("Passwords are not equal")
+            return;
+        }
+
+        const obj = JSON.stringify({"username":username,"password":password_1,"userRoles":userRoles});
+
+        $.ajax({
+            url:"http://localhost:8080/v1/test/save-user",
+            type:"POST",
+            contentType:"application/json",
+            data:obj,
+            headers:{
+                'Authorization':'Bearer '+localStorage.getItem("JWT")
+            },
+            success:function(resposne){
+                alert(resposne.message)
+            }
+        });
+    }
+
+
+
+</script>
+
+</body>
+</html>
