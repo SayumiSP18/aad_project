@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Courier Service</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Courier Service Login</h2>
+
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+
+        <button type="button" onclick="handleLogin()">Login</button>
+        <div class="err-msg" id="errMsg"></div>
+
+        <div class="auth-links">
+            Don't have an account? <a href="register.html">Register</a>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+    function handleLogin() {
+        const username = $('#username').val().trim();
+        const password = $('#password').val().trim();
+        $('#errMsg').text("");
+
+        if (!username || !password) {
+            $('#errMsg').text("Please enter username and password");
+            return;
+        }
+
+        apiCall("POST", "/v1/auth/login", { userName: username, password: password })
+            .then(function (response) {
+                localStorage.setItem("JWT", response.body.token);
+                localStorage.setItem("userId", response.body.userId);
+                localStorage.setItem("username", username);
+
+                // Decode role from the JWT payload (base64) for display/navigation only.
+                try {
+                    const payload = JSON.parse(atob(response.body.token.split('.')[1]));
+                    localStorage.setItem("role", payload.role || "");
+                } catch (e) {
+                    localStorage.setItem("role", "");
+                }
+
+                const role = (localStorage.getItem("role") || "").toUpperCase();
+                if (role === "CUSTOMER") {
+                    location.href = "customer.html";
+                } else if (role === "DRIVER") {
+                    location.href = "driver.html";
+                } else {
+                    location.href = "index.html";
+                }
+            })
+            .catch(function (err) {
+                $('#errMsg').text(err.message || "Invalid credentials");
+            });
+    }
+
+    $(document).on('keypress', function (e) {
+        if (e.which === 13) handleLogin();
+    });
+</script>
+
+</body>
+</html>

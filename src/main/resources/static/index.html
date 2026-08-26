@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Courier Service - Admin Console</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="sidebar">
+    <h1>Courier Service</h1>
+    <div id="navLinks"></div>
+    <a class="logout" id="logoutBtn">Logout</a>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h2 id="pageTitle">Dashboard</h2>
+      <div class="userchip">
+        Logged in as <b id="topUsername"></b> (<span id="topRole"></span>)
+      </div>
+    </div>
+
+    <div class="toolbar" id="toolbar"></div>
+
+    <table>
+      <thead id="tableHead"></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add/Edit modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add Record</h3>
+    <form id="modalForm">
+      <div id="modalFields"></div>
+      <div class="actions">
+        <button type="button" class="btn secondary" id="modalCancel">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

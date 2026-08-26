@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Panel - Courier Service</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="app-shell">
+    <div class="sidebar">
+        <h1>Courier Service</h1>
+        <div class="group-label">Driver</div>
+        <a class="active">My Deliveries</a>
+        <a class="logout" id="logoutBtn">Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <h2>Driver Panel</h2>
+            <div class="userchip">
+                Logged in as <b id="topUsername"></b> (DRIVER)
+            </div>
+        </div>
+
+        <div class="modal" style="width:auto; max-width:520px; margin-bottom:20px; padding:16px 20px;">
+            <h3 style="margin-top:0;">My Profile</h3>
+            <div id="profileBox">Loading...</div>
+        </div>
+
+        <h3>Assigned Deliveries</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th><th>Parcel</th><th>Vehicle</th><th>Status</th><th>Delivered At</th><th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="deliveryTblBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Status update modal -->
+<div class="modal-overlay" id="statusModalOverlay">
+    <div class="modal">
+        <h3>Update Delivery Status</h3>
+        <form id="statusForm">
+            <label>Status</label>
+            <select id="statusSelect">
+                <option value="BOOKED">BOOKED</option>
+                <option value="PICKED_UP">PICKED_UP</option>
+                <option value="IN_TRANSIT">IN_TRANSIT</option>
+                <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
+                <option value="DELIVERED">DELIVERED</option>
+                <option value="FAILED">FAILED</option>
+            </select>
+            <label>Location note (optional, also logs a tracking update)</label>
+            <input type="text" id="locationNote" placeholder="e.g. Colombo hub">
+            <div class="actions">
+                <button type="button" class="btn secondary" id="statusCancel">Cancel</button>
+                <button type="submit" class="btn">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+    requireRole(["DRIVER"]);
+    $("#topUsername").text(localStorage.getItem("username") || "");
+
+    let myDriverId = null;
+    let activeDelivery = null;
+
+    function loadProfile() {
+        return apiCall("GET", "/v1/drivers/me").then(function (res) {
+            const d = res.body;
+            myDriverId = d.driverId;
+            $("#profileBox").html(
+                `Username: <b>${d.username}</b><br>Branch: <b>${d.branchName}</b><br>License No: <b>${d.licenseNo}</b>`
+            );
+        }).catch(function (err) {
+            $("#profileBox").text((err && err.message) || "Could not load profile");
+        });
+    }
+
+    function loadDeliveries() {
+        apiCall("GET", "/v1/deliveries/filter", undefined, { driverId: myDriverId }).then(function (res) {
+            renderDeliveries(res.body || []);
+        });
+    }
+
+    function renderDeliveries(rows) {
+        if (!rows.length) {
+            $("#deliveryTblBody").html('<tr><td colspan="6"><div class="empty-state">No deliveries assigned yet</div></td></tr>');
+            return;
+        }
+        let html = "";
+        rows.forEach(function (r) {
+            html += `<tr>
+                <td>${r.deliveryId}</td>
+                <td>${r.trackingNo}</td>
+                <td>${r.vehicleNo}</td>
+                <td><span class="badge">${r.status || ""}</span></td>
+                <td>${r.deliveredAt || "-"}</td>
+                <td><button class="btn secondary small" onclick='openStatusModal(${JSON.stringify(r)})'>Update Status</button></td>
+            </tr>`;
+        });
+        $("#deliveryTblBody").html(html);
+    }
+
+    function openStatusModal(delivery) {
+        activeDelivery = delivery;
+        $("#statusSelect").val(delivery.status || "BOOKED");
+        $("#locationNote").val("");
+        $("#statusModalOverlay").addClass("open");
+    }
+
+    $("#statusCancel").on("click", function () {
+        $("#statusModalOverlay").removeClass("open");
+    });
+
+    $("#statusForm").on("submit", function (e) {
+        e.preventDefault();
+        const newStatus = $("#statusSelect").val();
+        const location = $("#locationNote").val().trim();
+
+        const payload = Object.assign({}, activeDelivery, { status: newStatus });
+        if (newStatus === "DELIVERED") {
+            payload.deliveredAt = new Date().toISOString();
+        }
+
+        apiCall("PUT", "/v1/deliveries/update", payload).then(function () {
+            if (location) {
+                return apiCall("POST", "/v1/tracking-history/save", {
+                    parcelId: activeDelivery.parcelId,
+                    status: newStatus,
+                    location: location
+                });
+            }
+        }).then(function () {
+            $("#statusModalOverlay").removeClass("open");
+            loadDeliveries();
+        }).catch(function (err) {
+            alert((err && err.message) || "Update failed");
+        });
+    });
+
+    $("#logoutBtn").on("click", function () {
+        localStorage.clear();
+        location.href = "login.html";
+    });
+
+    loadProfile().then(loadDeliveries);
+</script>
+
+</body>
+</html>

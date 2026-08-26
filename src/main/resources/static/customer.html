@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Panel - Courier Service</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="app-shell">
+    <div class="sidebar">
+        <h1>Courier Service</h1>
+        <div class="group-label">Customer</div>
+        <a data-tab="parcels" class="active" onclick="showTab('parcels')">My Parcels</a>
+        <a data-tab="complaints" onclick="showTab('complaints')">My Complaints</a>
+        <a data-tab="notifications" onclick="showTab('notifications')">Notifications</a>
+        <a class="logout" id="logoutBtn">Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <h2 id="pageTitle">My Parcels</h2>
+            <div class="userchip">Logged in as <b id="topUsername"></b> (CUSTOMER)</div>
+        </div>
+
+        <div class="modal" style="width:auto; max-width:520px; margin-bottom:20px; padding:16px 20px;">
+            <h3 style="margin-top:0;">My Profile</h3>
+            <div id="profileBox">Loading...</div>
+        </div>
+
+        <!-- Parcels tab -->
+        <div id="tab-parcels">
+            <div class="toolbar">
+                <button class="btn small" onclick="openBookModal()">+ Book a Parcel</button>
+                <input type="text" id="trackBox" placeholder="Enter tracking no to view history">
+                <button class="btn secondary small" onclick="trackParcel()">Track</button>
+            </div>
+            <table>
+                <thead><tr><th>Tracking No</th><th>Weight</th><th>Receiver</th><th>Status</th></tr></thead>
+                <tbody id="parcelTblBody"></tbody>
+            </table>
+            <div id="trackingResult" style="margin-top:16px;"></div>
+        </div>
+
+        <!-- Complaints tab -->
+        <div id="tab-complaints" style="display:none;">
+            <div class="toolbar">
+                <button class="btn small" onclick="openComplaintModal()">+ File a Complaint</button>
+            </div>
+            <table>
+                <thead><tr><th>ID</th><th>Parcel</th><th>Description</th><th>Status</th></tr></thead>
+                <tbody id="complaintTblBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Notifications tab -->
+        <div id="tab-notifications" style="display:none;">
+            <table>
+                <thead><tr><th>Message</th><th>Read</th><th>Date</th></tr></thead>
+                <tbody id="notificationTblBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Book parcel modal -->
+<div class="modal-overlay" id="bookModalOverlay">
+    <div class="modal">
+        <h3>Book a Parcel</h3>
+        <form id="bookForm">
+            <label>Weight (kg)</label>
+            <input type="number" step="0.01" id="bookWeight" required>
+            <label>Description</label>
+            <input type="text" id="bookDescription">
+            <label>Receiver Name</label>
+            <input type="text" id="bookReceiverName" required>
+            <label>Receiver Address</label>
+            <input type="text" id="bookReceiverAddress" required>
+            <div class="actions">
+                <button type="button" class="btn secondary" id="bookCancel">Cancel</button>
+                <button type="submit" class="btn">Book</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Complaint modal -->
+<div class="modal-overlay" id="complaintModalOverlay">
+    <div class="modal">
+        <h3>File a Complaint</h3>
+        <form id="complaintForm">
+            <label>Parcel</label>
+            <select id="complaintParcelId" required></select>
+            <label>Description</label>
+            <input type="text" id="complaintDescription" required>
+            <div class="actions">
+                <button type="button" class="btn secondary" id="complaintCancel">Cancel</button>
+                <button type="submit" class="btn">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+    requireRole(["CUSTOMER"]);
+    $("#topUsername").text(localStorage.getItem("username") || "");
+
+    let myCustomerId = null;
+    let myParcels = [];
+
+    function showTab(tab) {
+        $("[data-tab]").removeClass("active");
+        $(`[data-tab="${tab}"]`).addClass("active");
+        $("#tab-parcels, #tab-complaints, #tab-notifications").hide();
+        $("#tab-" + tab).show();
+        $("#pageTitle").text($(`[data-tab="${tab}"]`).text());
+
+        if (tab === "complaints") loadComplaints();
+        if (tab === "notifications") loadNotifications();
+    }
+
+    function loadProfile() {
+        return apiCall("GET", "/v1/customers/me").then(function (res) {
+            const c = res.body;
+            myCustomerId = c.customerId;
+            $("#profileBox").html(
+                `Username: <b>${c.username}</b><br>Full Name: <b>${c.fullName}</b><br>Address: <b>${c.address}</b>`
+            );
+        }).catch(function (err) {
+            $("#profileBox").text((err && err.message) || "Could not load profile");
+        });
+    }
+
+    function loadParcels() {
+        apiCall("GET", "/v1/parcels/filter", undefined, { customerId: myCustomerId }).then(function (res) {
+            myParcels = res.body || [];
+            renderParcels(myParcels);
+        });
+    }
+
+    function renderParcels(rows) {
+        if (!rows.length) {
+            $("#parcelTblBody").html('<tr><td colspan="4"><div class="empty-state">No parcels yet</div></td></tr>');
+            return;
+        }
+        let html = "";
+        rows.forEach(function (r) {
+            html += `<tr><td>${r.trackingNo}</td><td>${r.weight}</td><td>${r.receiverName}</td>
+                     <td><span class="badge">${r.status || ""}</span></td></tr>`;
+        });
+        $("#parcelTblBody").html(html);
+    }
+
+    function openBookModal() {
+        $("#bookWeight, #bookDescription, #bookReceiverName, #bookReceiverAddress").val("");
+        $("#bookModalOverlay").addClass("open");
+    }
+    $("#bookCancel").on("click", function () { $("#bookModalOverlay").removeClass("open"); });
+
+    $("#bookForm").on("submit", function (e) {
+        e.preventDefault();
+        const payload = {
+            customerId: myCustomerId,
+            weight: parseFloat($("#bookWeight").val()),
+            description: $("#bookDescription").val(),
+            receiverName: $("#bookReceiverName").val(),
+            receiverAddress: $("#bookReceiverAddress").val()
+        };
+        apiCall("POST", "/v1/parcels/save", payload).then(function (res) {
+            alert(res.message || "Parcel booked");
+            $("#bookModalOverlay").removeClass("open");
+            loadParcels();
+        }).catch(function (err) { alert((err && err.message) || "Booking failed"); });
+    });
+
+    function trackParcel() {
+        const trackingNo = $("#trackBox").val().trim();
+        const parcel = myParcels.find(function (p) { return p.trackingNo === trackingNo; });
+        if (!parcel) {
+            $("#trackingResult").html('<div class="empty-state">Tracking number not found among your parcels</div>');
+            return;
+        }
+        apiCall("GET", "/v1/tracking-history/filter", undefined, { parcelId: parcel.parcelId }).then(function (res) {
+            const rows = res.body || [];
+            if (!rows.length) {
+                $("#trackingResult").html('<div class="empty-state">No tracking updates yet</div>');
+                return;
+            }
+            let html = "<h3>Tracking history for " + trackingNo + "</h3><table><thead><tr><th>Status</th><th>Location</th><th>Updated At</th></tr></thead><tbody>";
+            rows.forEach(function (r) {
+                html += `<tr><td>${r.status}</td><td>${r.location || "-"}</td><td>${r.updatedAt || "-"}</td></tr>`;
+            });
+            html += "</tbody></table>";
+            $("#trackingResult").html(html);
+        });
+    }
+
+    function loadComplaints() {
+        apiCall("GET", "/v1/complaints/filter", undefined, { customerId: myCustomerId }).then(function (res) {
+            const rows = res.body || [];
+            if (!rows.length) {
+                $("#complaintTblBody").html('<tr><td colspan="4"><div class="empty-state">No complaints filed</div></td></tr>');
+                return;
+            }
+            let html = "";
+            rows.forEach(function (r) {
+                html += `<tr><td>${r.complaintId}</td><td>${r.trackingNo}</td><td>${r.description}</td>
+                         <td><span class="badge">${r.status || ""}</span></td></tr>`;
+            });
+            $("#complaintTblBody").html(html);
+        });
+    }
+
+    function openComplaintModal() {
+        let opts = "";
+        myParcels.forEach(function (p) { opts += `<option value="${p.parcelId}">${p.trackingNo}</option>`; });
+        $("#complaintParcelId").html(opts);
+        $("#complaintDescription").val("");
+        $("#complaintModalOverlay").addClass("open");
+    }
+    $("#complaintCancel").on("click", function () { $("#complaintModalOverlay").removeClass("open"); });
+
+    $("#complaintForm").on("submit", function (e) {
+        e.preventDefault();
+        const payload = {
+            customerId: myCustomerId,
+            parcelId: Number($("#complaintParcelId").val()),
+            description: $("#complaintDescription").val()
+        };
+        apiCall("POST", "/v1/complaints/save", payload).then(function (res) {
+            alert(res.message || "Complaint filed");
+            $("#complaintModalOverlay").removeClass("open");
+            loadComplaints();
+        }).catch(function (err) { alert((err && err.message) || "Submission failed"); });
+    });
+
+    function loadNotifications() {
+        const userId = localStorage.getItem("userId");
+        apiCall("GET", "/v1/notifications/filter", undefined, { userId: userId }).then(function (res) {
+            const rows = res.body || [];
+            if (!rows.length) {
+                $("#notificationTblBody").html('<tr><td colspan="3"><div class="empty-state">No notifications</div></td></tr>');
+                return;
+            }
+            let html = "";
+            rows.forEach(function (r) {
+                html += `<tr><td>${r.message}</td><td>${r.isRead ? "Yes" : "No"}</td><td>${r.createdAt || "-"}</td></tr>`;
+            });
+            $("#notificationTblBody").html(html);
+        });
+    }
+
+    $("#logoutBtn").on("click", function () {
+        localStorage.clear();
+        location.href = "login.html";
+    });
+
+    loadProfile().then(loadParcels);
+</script>
+
+</body>
+</html>

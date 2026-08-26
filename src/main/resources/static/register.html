@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Courier Service</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Register</h2>
+
+        <div class="role-toggle">
+            <button type="button" id="tabCustomer" class="active" onclick="switchTab('customer')">Customer</button>
+            <button type="button" id="tabDriver" onclick="switchTab('driver')">Driver</button>
+        </div>
+
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+
+        <!-- Customer fields -->
+        <div id="customerFields">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName">
+
+            <label for="address">Address</label>
+            <input type="text" id="address">
+        </div>
+
+        <!-- Driver fields -->
+        <div id="driverFields" style="display:none;">
+            <label for="licenseNo">License No</label>
+            <input type="text" id="licenseNo">
+
+            <label for="branchId">Branch</label>
+            <select id="branchId"></select>
+        </div>
+
+        <button type="button" onclick="handleRegister()">Register</button>
+        <div class="err-msg" id="errMsg"></div>
+
+        <div class="auth-links">
+            Already have an account? <a href="login.html">Login</a>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+    let currentTab = "customer";
+
+    function switchTab(tab) {
+        currentTab = tab;
+        $("#tabCustomer, #tabDriver").removeClass("active");
+        $("#tab" + tab.charAt(0).toUpperCase() + tab.slice(1)).addClass("active");
+        $("#customerFields").toggle(tab === "customer");
+        $("#driverFields").toggle(tab === "driver");
+
+        if (tab === "driver" && $("#branchId option").length === 0) {
+            apiCall("GET", "/v1/branches/all").then(function (res) {
+                let html = "";
+                (res.body || []).forEach(function (b) {
+                    html += `<option value="${b.branchId}">${b.name}</option>`;
+                });
+                $("#branchId").html(html);
+            });
+        }
+    }
+
+    function handleRegister() {
+        const username = $('#username').val().trim();
+        const password = $('#password').val().trim();
+        $('#errMsg').text("");
+
+        if (!username || !password) {
+            $('#errMsg').text("Username and password are required");
+            return;
+        }
+
+        let url, payload;
+        if (currentTab === "customer") {
+            const fullName = $('#fullName').val().trim();
+            const address = $('#address').val().trim();
+            if (!fullName || !address) {
+                $('#errMsg').text("Full name and address are required");
+                return;
+            }
+            url = "/v1/customers/register";
+            payload = { username, password, fullName, address };
+        } else {
+            const licenseNo = $('#licenseNo').val().trim();
+            const branchId = $('#branchId').val();
+            if (!licenseNo || !branchId) {
+                $('#errMsg').text("License number and branch are required");
+                return;
+            }
+            url = "/v1/drivers/register";
+            payload = { username, password, licenseNo, branchId: Number(branchId) };
+        }
+
+        apiCall("POST", url, payload)
+            .then(function (response) {
+                alert(response.message || "Registered successfully");
+                location.href = "login.html";
+            })
+            .catch(function (err) {
+                $('#errMsg').text(err.message || "Registration failed");
+            });
+    }
+</script>
+
+</body>
+</html>
