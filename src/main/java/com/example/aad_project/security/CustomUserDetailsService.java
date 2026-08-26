@@ -18,17 +18,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<com.example.aad_project.entity.User> optionalUser = userRepository.findByUserName(username);
+        Optional<com.example.aad_project.entity.User> optionalUser = userRepository.findByUsername(username);
 
-        if(optionalUser.isEmpty())
-            throw new RuntimeException("Sorry no user");
+        if (optionalUser.isEmpty())
+            throw new UsernameNotFoundException("No user found with username: " + username);
 
+        com.example.aad_project.entity.User user = optionalUser.get();
 
         return User.builder()
-                .username(optionalUser.get().getUsername())
-                .password(optionalUser.get().getPassword())
-                .roles(optionalUser.get().getUserRole())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getUserRoles().getRoleName())
                 .build();
     }
-
 }

@@ -4,6 +4,7 @@ import com.example.aad_project.dto.UserDTO;
 import com.example.aad_project.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,17 +15,17 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByUserNameAndPassword(String username, String password);
 
-    Optional<User> findByUserName(String username);
+    Optional<User> findByUsername(String username);
 
-    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.username,u.userRole) " +
+    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId, u.username, u.userRoles.roleName) " +
             "FROM User u")
     List<UserDTO> getAllUsers();
 
-    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.username,u.userRole) " +
+    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId, u.username, u.userRoles.roleName) " +
             "FROM User u " +
-            "WHERE (?1 IS NULL OR u.username LIKE %?1%)")
-    List<UserDTO> filterUser(String username);
+            "WHERE (:username IS NULL OR u.username LIKE %:username%)")
+    List<UserDTO> filterUser(@Param("username") String username);
 
-    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId,u.username,u.userRole) " +
-            "FROM User u WHERE u.userId=?1")
-    UserDTO selectUser(long userId);}
+    @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId, u.username, u.userRoles.roleName) " +
+            "FROM User u WHERE u.userId = :userId")
+    Optional<UserDTO> selectUser(@Param("userId") long userId);}

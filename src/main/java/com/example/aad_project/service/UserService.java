@@ -1,5 +1,6 @@
 package com.example.aad_project.service;
 
+import com.example.aad_project.dto.AuthDTO;
 import com.example.aad_project.dto.UserDTO;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 public interface UserService {
 
 
-    UserDTO getUserDetails(String username, String password);
+    UserDTO authenticate(AuthDTO authDTO);
 
     void saveUser(UserDTO userDTO);
 
@@ -17,4 +18,6 @@ public interface UserService {
 
     UserDTO selectUser(long userId);
 
-    void updateUser(UserDTO userDTO);}
+    void updateUser(UserDTO userDTO);
+
+    void deleteUser(long userId);}
