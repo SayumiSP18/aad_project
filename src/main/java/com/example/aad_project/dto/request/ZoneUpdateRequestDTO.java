@@ -3,7 +3,7 @@ package com.example.aad_project.dto.request;
 import lombok.Data;
 
 @Data
-public class ZoneUpdateDTO {
+public class ZoneUpdateRequestDTO {
 
 //    @Positive(message = "Zone id is required")
     private long zoneId;
