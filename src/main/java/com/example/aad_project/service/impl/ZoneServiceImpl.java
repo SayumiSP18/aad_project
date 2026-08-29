@@ -44,6 +44,7 @@ public class ZoneServiceImpl implements ZoneService {
                 .orElseThrow(() -> new CustomException(404, "Zone not found"));
     }
 
+
     @Override
     public void updateZone(ZoneUpdateRequestDTO request) {
         Zone zone = zoneRepository.findById(request.getZoneId())
