@@ -4,7 +4,7 @@ package com.example.aad_project.dto.request;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
+public class LoginRequestDTO {
 
 //    @NotBlank(message = "Username or email is required")
 //    private String usernameOrEmail;
