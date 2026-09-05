@@ -14,6 +14,8 @@ public interface UserService {
 
     List<UserDTO> getAllUsers();
 
+    UserDTO getUserDetails(String username, String password);
+
     List<UserDTO> filterUsers(String username);
 
     UserDTO selectUser(long userId);

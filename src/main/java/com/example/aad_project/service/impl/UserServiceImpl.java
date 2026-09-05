@@ -64,6 +64,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getUserDetails(String username, String password) {
+        return null;
+    }
+
+    @Override
     public List<UserDTO> filterUsers(String username) {
         return userRepository.filterUser(username);
     }
