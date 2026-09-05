@@ -5,7 +5,7 @@ import com.example.aad_project.dto.DriverRegisterDTO;
 
 import java.util.List;
 
-public interface DriverSrvice {
+public interface DriverService {
     void registerDriver(DriverRegisterDTO registerDTO);
 
     List<DriverDTO> getAllDrivers();
