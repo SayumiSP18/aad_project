@@ -35,20 +35,5 @@ public class BookingController {
         return new CommonResponse(0, bookings, "Filter bookings");
     }
 
-    @GetMapping(value = "/{bookingId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse selectBooking(@PathVariable long bookingId) {
-        BookingDTO dto = bookingService.selectBooking(bookingId);
-        return new CommonResponse(0, dto, "Booking details");
-    }
 
-    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateBooking( @RequestBody BookingDTO bookingDTO) {
-        bookingService.updateBooking(bookingDTO);
-        return new CommonResponse(0, "Booking updated");
-    }
-
-    @DeleteMapping(value = "/{bookingId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse deleteBooking(@PathVariable long bookingId) {
-        bookingService.deleteBooking(bookingId);
-        return new CommonResponse(0, "Booking deleted");
-    }}
+}
