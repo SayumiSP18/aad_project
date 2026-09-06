@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -28,4 +29,35 @@ public class DriverController {
     public CommonResponse getAllDrivers() {
         List<DriverDTO> drivers = driverService.getAllDrivers();
         return new CommonResponse(0, drivers, "Get all drivers");
-    }}
+    }
+
+    @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse filterDrivers(@RequestParam(value = "branchId", required = false) Long branchId) {
+        List<DriverDTO> drivers = driverService.filterDrivers(branchId);
+        return new CommonResponse(0, drivers, "Filter drivers");
+    }
+
+    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse getMyProfile(Principal principal) {
+        DriverDTO dto = driverService.getMyProfile(principal.getName());
+        return new CommonResponse(0, dto, "My profile");
+    }
+
+    @GetMapping(value = "/{driverId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse selectDriver(@PathVariable long driverId) {
+        DriverDTO dto = driverService.selectDriver(driverId);
+        return new CommonResponse(0, dto, "Driver details");
+    }
+
+    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse updateDriver( @RequestBody DriverDTO driverDTO) {
+        driverService.updateDriver(driverDTO);
+        return new CommonResponse(0, "Driver updated");
+    }
+
+    @DeleteMapping(value = "/{driverId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse deleteDriver(@PathVariable long driverId) {
+        driverService.deleteDriver(driverId);
+        return new CommonResponse(0, "Driver deleted");
+    }
+}
