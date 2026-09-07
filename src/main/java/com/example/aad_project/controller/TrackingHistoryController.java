@@ -41,4 +41,16 @@ public class TrackingHistoryController {
         return new CommonResponse(0, dto, "Tracking record details");
     }
 
+    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse updateHistory( @RequestBody TrackingHistoryDTO historyDTO) {
+        trackingHistoryService.updateHistory(historyDTO);
+        return new CommonResponse(0, "Tracking record updated");
+    }
+
+    @DeleteMapping(value = "/{historyId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse deleteHistory(@PathVariable long historyId) {
+        trackingHistoryService.deleteHistory(historyId);
+        return new CommonResponse(0, "Tracking record deleted");
+    }
+
     }
