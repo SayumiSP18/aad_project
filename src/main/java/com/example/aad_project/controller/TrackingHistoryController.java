@@ -3,6 +3,7 @@ package com.example.aad_project.controller;
 import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.TrackingHistoryDTO;
 import com.example.aad_project.service.TrackingHistoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class TrackingHistoryController {
     private final TrackingHistoryService trackingHistoryService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveHistory( @RequestBody TrackingHistoryDTO historyDTO) {
+    public CommonResponse saveHistory(@Valid @RequestBody TrackingHistoryDTO historyDTO) {
         trackingHistoryService.saveHistory(historyDTO);
         return new CommonResponse(0, "Tracking update recorded successfully");
     }
@@ -42,7 +43,7 @@ public class TrackingHistoryController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateHistory( @RequestBody TrackingHistoryDTO historyDTO) {
+    public CommonResponse updateHistory(@Valid @RequestBody TrackingHistoryDTO historyDTO) {
         trackingHistoryService.updateHistory(historyDTO);
         return new CommonResponse(0, "Tracking record updated");
     }

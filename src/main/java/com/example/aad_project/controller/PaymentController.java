@@ -4,6 +4,7 @@ import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.PaymentDTO;
 import com.example.aad_project.enumaration.PaymentStatus;
 import com.example.aad_project.service.PaymentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse savePayment( @RequestBody PaymentDTO paymentDTO) {
+    public CommonResponse savePayment(@Valid @RequestBody PaymentDTO paymentDTO) {
         paymentService.savePayment(paymentDTO);
         return new CommonResponse(0, "Payment recorded successfully");
     }
@@ -43,7 +44,7 @@ public class PaymentController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updatePayment( @RequestBody PaymentDTO paymentDTO) {
+    public CommonResponse updatePayment(@Valid @RequestBody PaymentDTO paymentDTO) {
         paymentService.updatePayment(paymentDTO);
         return new CommonResponse(0, "Payment updated");
     }

@@ -3,6 +3,7 @@ package com.example.aad_project.controller;
 import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.BookingDTO;
 import com.example.aad_project.service.BookingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveBooking( @RequestBody BookingDTO bookingDTO) {
+    public CommonResponse saveBooking(@Valid @RequestBody BookingDTO bookingDTO) {
         bookingService.saveBooking(bookingDTO);
         return new CommonResponse(0, "Booking created successfully");
     }
@@ -42,7 +43,7 @@ public class BookingController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateBooking( @RequestBody BookingDTO bookingDTO) {
+    public CommonResponse updateBooking(@Valid @RequestBody BookingDTO bookingDTO) {
         bookingService.updateBooking(bookingDTO);
         return new CommonResponse(0, "Booking updated");
     }

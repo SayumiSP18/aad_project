@@ -5,6 +5,7 @@ import com.example.aad_project.dto.request.BranchCreateRequestDTO;
 import com.example.aad_project.dto.request.BranchUpdateRequestDTO;
 import com.example.aad_project.dto.response.BranchResponseDTO;
 import com.example.aad_project.service.BranchService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class BranchController {
     private final BranchService branchService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveBranch( @RequestBody BranchCreateRequestDTO request) {
+    public CommonResponse saveBranch(@Valid @RequestBody BranchCreateRequestDTO request) {
         branchService.saveBranch(request);
         return new CommonResponse(0, "Branch created successfully");
     }
@@ -44,7 +45,7 @@ public class BranchController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateBranch( @RequestBody BranchUpdateRequestDTO request) {
+    public CommonResponse updateBranch(@Valid @RequestBody BranchUpdateRequestDTO request) {
         branchService.updateBranch(request);
         return new CommonResponse(0, "Branch updated");
     }

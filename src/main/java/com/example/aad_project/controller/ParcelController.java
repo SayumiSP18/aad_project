@@ -3,6 +3,7 @@ package com.example.aad_project.controller;
 import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.ParcelDTO;
 import com.example.aad_project.service.ParcelService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class ParcelController {
     private final ParcelService parcelService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveParcel( @RequestBody ParcelDTO parcelDTO) {
+    public CommonResponse saveParcel(@Valid @RequestBody ParcelDTO parcelDTO) {
         parcelService.saveParcel(parcelDTO);
         return new CommonResponse(0, "Parcel created successfully");
     }
@@ -43,7 +44,7 @@ public class ParcelController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateParcel( @RequestBody ParcelDTO parcelDTO) {
+    public CommonResponse updateParcel(@Valid @RequestBody ParcelDTO parcelDTO) {
         parcelService.updateParcel(parcelDTO);
         return new CommonResponse(0, "Parcel updated");
     }

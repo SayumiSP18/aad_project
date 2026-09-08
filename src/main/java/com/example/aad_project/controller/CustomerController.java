@@ -4,6 +4,7 @@ import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.CustomerDTO;
 import com.example.aad_project.dto.CustomerRegisterDTO;
 import com.example.aad_project.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse register( @RequestBody CustomerRegisterDTO registerDTO) {
+    public CommonResponse register(@Valid @RequestBody CustomerRegisterDTO registerDTO) {
         customerService.registerCustomer(registerDTO);
         return new CommonResponse(0, "Customer registered successfully");
     }
@@ -50,7 +51,7 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateCustomer( @RequestBody CustomerDTO customerDTO) {
+    public CommonResponse updateCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         customerService.updateCustomer(customerDTO);
         return new CommonResponse(0, "Customer updated");
     }
@@ -59,4 +60,5 @@ public class CustomerController {
     public CommonResponse deleteCustomer(@PathVariable long customerId) {
         customerService.deleteCustomer(customerId);
         return new CommonResponse(0, "Customer deleted");
-    }}
+    }
+}

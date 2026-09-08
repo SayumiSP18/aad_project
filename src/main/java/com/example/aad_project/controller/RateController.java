@@ -3,6 +3,7 @@ package com.example.aad_project.controller;
 import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.RateDTO;
 import com.example.aad_project.service.RateService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class RateController {
     private final RateService rateService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveRate( @RequestBody RateDTO rateDTO) {
+    public CommonResponse saveRate(@Valid @RequestBody RateDTO rateDTO) {
         rateService.saveRate(rateDTO);
         return new CommonResponse(0, "Rate created successfully");
     }
@@ -42,7 +43,7 @@ public class RateController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateRate( @RequestBody RateDTO rateDTO) {
+    public CommonResponse updateRate(@Valid @RequestBody RateDTO rateDTO) {
         rateService.updateRate(rateDTO);
         return new CommonResponse(0, "Rate updated");
     }

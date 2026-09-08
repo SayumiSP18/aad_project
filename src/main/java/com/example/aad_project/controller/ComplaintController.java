@@ -4,6 +4,7 @@ import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.ComplaintDTO;
 import com.example.aad_project.enumaration.ComplaintStatus;
 import com.example.aad_project.service.ComplaintService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class ComplaintController {
     private final ComplaintService complaintService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveComplaint( @RequestBody ComplaintDTO complaintDTO) {
+    public CommonResponse saveComplaint(@Valid @RequestBody ComplaintDTO complaintDTO) {
         complaintService.saveComplaint(complaintDTO);
         return new CommonResponse(0, "Complaint filed successfully");
     }
@@ -44,7 +45,7 @@ public class ComplaintController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateComplaint( @RequestBody ComplaintDTO complaintDTO) {
+    public CommonResponse updateComplaint(@Valid @RequestBody ComplaintDTO complaintDTO) {
         complaintService.updateComplaint(complaintDTO);
         return new CommonResponse(0, "Complaint updated");
     }

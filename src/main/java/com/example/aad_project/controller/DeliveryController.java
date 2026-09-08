@@ -3,6 +3,7 @@ package com.example.aad_project.controller;
 import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.DeliveryDTO;
 import com.example.aad_project.service.DeliveryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveDelivery( @RequestBody DeliveryDTO deliveryDTO) {
+    public CommonResponse saveDelivery(@Valid @RequestBody DeliveryDTO deliveryDTO) {
         deliveryService.saveDelivery(deliveryDTO);
         return new CommonResponse(0, "Delivery assigned successfully");
     }
@@ -42,7 +43,7 @@ public class DeliveryController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateDelivery( @RequestBody DeliveryDTO deliveryDTO) {
+    public CommonResponse updateDelivery(@Valid @RequestBody DeliveryDTO deliveryDTO) {
         deliveryService.updateDelivery(deliveryDTO);
         return new CommonResponse(0, "Delivery updated");
     }

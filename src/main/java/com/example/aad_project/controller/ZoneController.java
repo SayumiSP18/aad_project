@@ -5,6 +5,7 @@ import com.example.aad_project.dto.request.ZoneCreateRequestDTO;
 import com.example.aad_project.dto.request.ZoneUpdateRequestDTO;
 import com.example.aad_project.dto.response.ZoneResponseDTO;
 import com.example.aad_project.service.ZoneService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class ZoneController {
     private final ZoneService zoneService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveZone( @RequestBody ZoneCreateRequestDTO request) {
+    public CommonResponse saveZone(@Valid @RequestBody ZoneCreateRequestDTO request) {
         zoneService.saveZone(request);
         return new CommonResponse(0, "Zone created successfully");
     }
@@ -44,7 +45,7 @@ public class ZoneController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateZone( @RequestBody ZoneUpdateRequestDTO request) {
+    public CommonResponse updateZone(@Valid @RequestBody ZoneUpdateRequestDTO request) {
         zoneService.updateZone(request);
         return new CommonResponse(0, "Zone updated");
     }
@@ -53,4 +54,5 @@ public class ZoneController {
     public CommonResponse deleteZone(@PathVariable long zoneId) {
         zoneService.deleteZone(zoneId);
         return new CommonResponse(0, "Zone deleted");
-    }}
+    }
+}

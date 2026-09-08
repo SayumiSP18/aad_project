@@ -5,6 +5,7 @@ import com.example.aad_project.dto.request.RouteCreateRequestDTO;
 import com.example.aad_project.dto.request.RouteUpdateRequestDTO;
 import com.example.aad_project.dto.response.RouteResponseDTO;
 import com.example.aad_project.service.RouteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class RouteController {
     private final RouteService routeService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveRoute( @RequestBody RouteCreateRequestDTO request) {
+    public CommonResponse saveRoute(@Valid @RequestBody RouteCreateRequestDTO request) {
         routeService.saveRoute(request);
         return new CommonResponse(0, "Route created successfully");
     }
@@ -44,7 +45,7 @@ public class RouteController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateRoute( @RequestBody RouteUpdateRequestDTO request) {
+    public CommonResponse updateRoute(@Valid @RequestBody RouteUpdateRequestDTO request) {
         routeService.updateRoute(request);
         return new CommonResponse(0, "Route updated");
     }
@@ -53,4 +54,5 @@ public class RouteController {
     public CommonResponse deleteRoute(@PathVariable long routeId) {
         routeService.deleteRoute(routeId);
         return new CommonResponse(0, "Route deleted");
-    }}
+    }
+}

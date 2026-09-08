@@ -3,6 +3,7 @@ package com.example.aad_project.controller;
 import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.VehicleDTO;
 import com.example.aad_project.service.VehicleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class VehicleController {
     private final VehicleService vehicleService;
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse saveVehicle( @RequestBody VehicleDTO vehicleDTO) {
+    public CommonResponse saveVehicle(@Valid @RequestBody VehicleDTO vehicleDTO) {
         vehicleService.saveVehicle(vehicleDTO);
         return new CommonResponse(0, "Vehicle registered successfully");
     }
@@ -42,7 +43,7 @@ public class VehicleController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateVehicle( @RequestBody VehicleDTO vehicleDTO) {
+    public CommonResponse updateVehicle(@Valid @RequestBody VehicleDTO vehicleDTO) {
         vehicleService.updateVehicle(vehicleDTO);
         return new CommonResponse(0, "Vehicle updated");
     }
