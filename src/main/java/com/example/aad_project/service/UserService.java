@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface UserService {
 
-
     UserDTO authenticate(AuthDTO authDTO);
 
     void saveUser(UserDTO userDTO);
@@ -22,4 +21,6 @@ public interface UserService {
 
     void updateUser(UserDTO userDTO);
 
-    void deleteUser(long userId);}
+    void deleteUser(long userId);
+
+}

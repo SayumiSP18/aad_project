@@ -27,7 +27,8 @@ public class UserController {
 
     @PostMapping(value = "/login",produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResponse authLogin(@RequestBody AuthDTO authDTO){
-        UserDTO userDetails = userService.getUserDetails(authDTO.getUserName(), authDTO.getPassword());
+
+        UserDTO userDetails = userService.authenticate(authDTO);
         System.out.println("API called here");
         String token = jwtUtil.generateToken(userDetails);
 
@@ -35,7 +36,7 @@ public class UserController {
         userDataDTO.setUserId(userDetails.getUserId());
         userDataDTO.setToken(token);
 
-        return new CommonResponse(0,userDataDTO,"JWT Token");
+        return new CommonResponse(0,userDataDTO,"JWT Token generated successfully");
     }
 
     @PostMapping(value = "/save-user",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,9 +59,10 @@ public class UserController {
 
     }
 
-    @DeleteMapping(value = "/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse deleteUser(@PathVariable long userId){
-        return new CommonResponse(0,"USER DELETED");
+    @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse deleteUser(@PathVariable long userId) {
+        userService.deleteUser(userId);
+        return new CommonResponse(0, "User deleted successfully");
     }
 
     @GetMapping(value = "/select-user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)

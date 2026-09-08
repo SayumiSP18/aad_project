@@ -8,6 +8,7 @@ import com.example.aad_project.exception.CustomException;
 import com.example.aad_project.repository.RoleRepository;
 import com.example.aad_project.repository.UserRepository;
 import com.example.aad_project.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -26,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+//    @Transactional(readOnly = true)
     public UserDTO authenticate(AuthDTO authDTO) {
 
         Optional<User> optionalUser = userRepository.findByUsername(authDTO.getUserName());
@@ -34,9 +38,10 @@ public class UserServiceImpl implements UserService {
 
         User user = optionalUser.get();
 
-        if (!passwordEncoder.matches(authDTO.getPassword(), user.getPassword()))
+        if (!passwordEncoder.matches(authDTO.getPassword(), user.getPassword())) {
             throw new CustomException(401, "Invalid username or password");
-
+        }
+        log.info("User logged in: {}", user.getUsername());
         return new UserDTO(user.getUserId(), user.getUsername(), user.getUserRoles().getRoleName(), null);
     }
 
@@ -93,10 +98,26 @@ public class UserServiceImpl implements UserService {
             user.setUserRoles(role);
         }
 
+        if (!user.getUsername().equals(userDTO.getUsername())
+                && userRepository.existsByUsername(userDTO.getUsername())) {
+            throw new CustomException(409, "Username already taken");
+        }
+
+        user.setUsername(userDTO.getUsername());
+
+        if (userDTO.getUserRoles() != null && !userDTO.getUserRoles().isBlank()) {
+            Role role = roleRepository.findByRoleName(userDTO.getUserRoles())
+                    .orElseThrow(() ->
+                            new CustomException(404,
+                                    "Role not found: " + userDTO.getUserRoles()));
+            user.setUserRoles(role);
+        }
+
         if (userDTO.getPassword() != null && !userDTO.getPassword().isBlank())
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
         userRepository.save(user);
+        log.info("User updated: {}", user.getUsername());
     }
 
     @Override
@@ -104,5 +125,7 @@ public class UserServiceImpl implements UserService {
         if (!userRepository.existsById(userId))
             throw new CustomException(404, "User not found");
         userRepository.deleteById(userId);
+//        log.info("User deleted: {}", user.getUsername());
+
     }
 }
