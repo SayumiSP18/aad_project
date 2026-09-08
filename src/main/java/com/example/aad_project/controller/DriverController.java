@@ -7,6 +7,7 @@ import com.example.aad_project.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.security.Principal;
 import java.util.List;
@@ -20,7 +21,7 @@ public class DriverController {
     private final DriverService driverService;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse register( @RequestBody DriverRegisterDTO registerDTO) {
+    public CommonResponse register(@Valid @RequestBody DriverRegisterDTO registerDTO) {
         driverService.registerDriver(registerDTO);
         return new CommonResponse(0, "Driver registered successfully");
     }

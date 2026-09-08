@@ -5,7 +5,9 @@ import com.example.aad_project.dto.DriverRegisterDTO;
 import com.example.aad_project.entity.Branch;
 import com.example.aad_project.entity.Driver;
 import com.example.aad_project.entity.User;
-import com.example.aad_project.enumaration.UserRole;
+//import com.example.aad_project.enumeration.UserRole;
+import com.example.aad_project.entity.Role;
+import com.example.aad_project.repository.RoleRepository;
 import com.example.aad_project.repository.BranchRepository;
 import com.example.aad_project.repository.DriverRepository;
 import com.example.aad_project.repository.UserRepository;
@@ -30,6 +32,7 @@ public class DriverServiceImpl implements DriverService {
     private final UserRepository userRepository;
     private final BranchRepository branchRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Override
     public void registerDriver(DriverRegisterDTO registerDTO) {
@@ -47,8 +50,12 @@ public class DriverServiceImpl implements DriverService {
         User user = new User();
         user.setUsername(registerDTO.getUsername());
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        user.setRole(UserRole.DRIVER);
+        Role driverRole = roleRepository.findByRoleName("DRIVER")
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "DRIVER role not found"
+                ));
 
+        user.setUserRoles(driverRole);
         User savedUser = userRepository.save(user);
 
         Driver driver = new Driver();
@@ -147,12 +154,12 @@ public class DriverServiceImpl implements DriverService {
         return DriverDTO.builder()
                 .id(driver.getDriverId())
                 .userId(user.getUserId())
-                .fullName(user.getFullName())
-                .phoneNumber(user.getPhoneNumber())
+                .fullName(user.getUsername())
+                .phoneNumber(null)
                 .licenseNumber(driver.getLicenseNo())
                 .licenseExpiry(driver.getLicenseExpiry())
                 .currentVehiclePlate(driver.getCurrentVehiclePlate())
-                .branchName(driver.getBranch().getBranchName())
+                .branchName(driver.getBranch().getName())
                 .available(driver.isAvailable())
                 .build();
     }

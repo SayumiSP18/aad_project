@@ -30,6 +30,10 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role userRoles;
+    private String fullName;
+
+    private String phoneNumber;
+
 
 //    private LocalDateTime createdAt;
 }

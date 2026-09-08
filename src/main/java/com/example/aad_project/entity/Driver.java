@@ -1,5 +1,6 @@
 package com.example.aad_project.entity;
 
+import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,4 +32,5 @@ public class Driver {
 
     @Column(nullable = false)
     private boolean available = true;
+    private LocalDate licenseExpiry;
 }

@@ -15,6 +15,7 @@ public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long branchId;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "zone_id", nullable = false)
