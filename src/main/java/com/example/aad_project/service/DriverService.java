@@ -6,6 +6,7 @@ import com.example.aad_project.dto.DriverRegisterDTO;
 import java.util.List;
 
 public interface DriverService {
+
     void registerDriver(DriverRegisterDTO registerDTO);
 
     List<DriverDTO> getAllDrivers();
@@ -20,5 +21,5 @@ public interface DriverService {
 
     void deleteDriver(long driverId);
 
-    }
+
 }

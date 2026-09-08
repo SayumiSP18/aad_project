@@ -25,4 +25,10 @@ public class Driver {
     private Branch branch;
 
     private String licenseNo;
+
+    @Column(name = "current_vehicle_plate")
+    private String currentVehiclePlate;
+
+    @Column(nullable = false)
+    private boolean available = true;
 }

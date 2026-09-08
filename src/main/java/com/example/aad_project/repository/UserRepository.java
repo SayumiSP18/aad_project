@@ -28,4 +28,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query(value = "SELECT new com.example.aad_project.dto.UserDTO(u.userId, u.username, u.userRoles.roleName) " +
             "FROM User u WHERE u.userId = :userId")
-    Optional<UserDTO> selectUser(@Param("userId") long userId);}
+    Optional<UserDTO> selectUser(@Param("userId") long userId);
+
+    boolean existsByUsername(String username);
+
+}
