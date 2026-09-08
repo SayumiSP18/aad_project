@@ -49,10 +49,11 @@ public class DriverController {
         return new CommonResponse(0, dto, "Driver details");
     }
 
-    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse updateDriver( @RequestBody DriverDTO driverDTO) {
+    @PutMapping(value = "/{driverId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse updateDriver(@PathVariable long driverId, @RequestBody DriverDTO driverDTO) {
+        driverDTO.setId(driverId);
         driverService.updateDriver(driverDTO);
-        return new CommonResponse(0, "Driver updated");
+        return new CommonResponse(0, "Driver updated successfully");
     }
 
     @DeleteMapping(value = "/{driverId}", produces = MediaType.APPLICATION_JSON_VALUE)
