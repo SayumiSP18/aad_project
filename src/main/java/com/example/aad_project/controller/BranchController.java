@@ -53,4 +53,5 @@ public class BranchController {
     public CommonResponse deleteBranch(@PathVariable long branchId) {
         branchService.deleteBranch(branchId);
         return new CommonResponse(0, "Branch deleted");
-    }}
+    }
+}
