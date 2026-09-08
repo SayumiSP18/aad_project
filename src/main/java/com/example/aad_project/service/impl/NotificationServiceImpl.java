@@ -54,12 +54,18 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void updateNotification(NotificationDTO notificationDTO) {
+        Notification notification = notificationRepository.findById(notificationDTO.getNotificationId())
+                .orElseThrow(() -> new CustomException(404, "Notification not found"));
 
+        notification.setRead(notificationDTO.isRead());
+        notificationRepository.save(notification);
     }
 
     @Override
     public void deleteNotification(long notificationId) {
-
+        if (!notificationRepository.existsById(notificationId))
+            throw new CustomException(404, "Notification not found");
+        notificationRepository.deleteById(notificationId);
     }
 
 }
