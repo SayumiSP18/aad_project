@@ -51,4 +51,5 @@ public class DeliveryController {
     public CommonResponse deleteDelivery(@PathVariable long deliveryId) {
         deliveryService.deleteDelivery(deliveryId);
         return new CommonResponse(0, "Delivery deleted");
-    }}
+    }
+}

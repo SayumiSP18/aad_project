@@ -67,4 +67,5 @@ public class TrackingHistoryServiceImpl implements TrackingHistoryService {
         if (!trackingHistoryRepository.existsById(historyId))
             throw new CustomException(404, "Tracking record not found");
         trackingHistoryRepository.deleteById(historyId);
-    }}
+    }
+}

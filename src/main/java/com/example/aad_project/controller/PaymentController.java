@@ -52,4 +52,5 @@ public class PaymentController {
     public CommonResponse deletePayment(@PathVariable long paymentId) {
         paymentService.deletePayment(paymentId);
         return new CommonResponse(0, "Payment deleted");
-    }}
+    }
+}

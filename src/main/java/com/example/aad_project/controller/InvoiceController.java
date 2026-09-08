@@ -51,4 +51,5 @@ public class InvoiceController {
     public CommonResponse deleteInvoice(@PathVariable long invoiceId) {
         invoiceService.deleteInvoice(invoiceId);
         return new CommonResponse(0, "Invoice deleted");
-    }}
+    }
+}
