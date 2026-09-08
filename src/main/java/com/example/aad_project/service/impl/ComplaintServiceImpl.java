@@ -77,4 +77,5 @@ public class ComplaintServiceImpl implements ComplaintService {
         if (!complaintRepository.existsById(complaintId))
             throw new CustomException(404, "Complaint not found");
         complaintRepository.deleteById(complaintId);
-    }}
+    }
+}
