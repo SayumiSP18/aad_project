@@ -21,6 +21,6 @@ public class Branch {
     @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
-    private String name;
+//    private String name;
     private String address;
 }
