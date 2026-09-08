@@ -37,4 +37,22 @@ public class ComplaintController {
         return new CommonResponse(0, complaints, "Filter complaints");
     }
 
+    @GetMapping(value = "/{complaintId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse selectComplaint(@PathVariable long complaintId) {
+        ComplaintDTO dto = complaintService.selectComplaint(complaintId);
+        return new CommonResponse(0, dto, "Complaint details");
+    }
+
+    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse updateComplaint( @RequestBody ComplaintDTO complaintDTO) {
+        complaintService.updateComplaint(complaintDTO);
+        return new CommonResponse(0, "Complaint updated");
+    }
+
+    @DeleteMapping(value = "/{complaintId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse deleteComplaint(@PathVariable long complaintId) {
+        complaintService.deleteComplaint(complaintId);
+        return new CommonResponse(0, "Complaint deleted");
+    }
+
 }
