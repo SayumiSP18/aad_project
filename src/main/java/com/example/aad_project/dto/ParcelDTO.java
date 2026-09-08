@@ -1,9 +1,12 @@
 package com.example.aad_project.dto;
 
 import com.example.aad_project.enumaration.ParcelStatus;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -12,21 +15,21 @@ public class ParcelDTO {
 
     private long parcelId;
 
-//    @NotNull(message = "Customer is required")
+    @NotNull(message = "Customer is required")
     private Long customerId;
 
     private String customerName;
     private String trackingNo;
 
-//    @Positive(message = "Weight must be greater than 0")
+    @Positive(message = "Weight must be greater than 0")
     private double weight;
 
     private String description;
 
-//    @NotBlank(message = "Receiver name is required")
+    @NotBlank(message = "Receiver name is required")
     private String receiverName;
 
-//    @NotBlank(message = "Receiver address is required")
+    @NotBlank(message = "Receiver address is required")
     private String receiverAddress;
 
     private ParcelStatus status;

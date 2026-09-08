@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +15,7 @@ public class InvoiceDTO {
 
     private long invoiceId;
 
-//    @NotNull(message = "Payment is required")
+    @NotNull(message = "Payment is required")
     private Long paymentId;
 
     private String invoiceNo;

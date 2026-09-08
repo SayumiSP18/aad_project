@@ -1,9 +1,11 @@
 package com.example.aad_project.dto;
 
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,18 +15,18 @@ public class BookingDTO {
 
     private long bookingId;
 
-//    @NotNull(message = "Parcel is required")
+    @NotNull(message = "Parcel is required")
     private Long parcelId;
 
     private String trackingNo;
 
-//    @NotNull(message = "Pickup branch is required")
+    @NotNull(message = "Pickup branch is required")
     private Long pickupBranchId;
 
     private String pickupBranchName;
     private LocalDateTime bookingDate;
 
-//    @PositiveOrZero(message = "Estimated cost must be zero or greater")
+    @PositiveOrZero(message = "Estimated cost must be zero or greater")
     private double estimatedCost;
 
     public BookingDTO(long bookingId, long parcelId, String trackingNo, long pickupBranchId, String pickupBranchName,

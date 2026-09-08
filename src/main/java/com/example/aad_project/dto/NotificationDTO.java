@@ -3,8 +3,8 @@ package com.example.aad_project.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,12 +14,12 @@ public class NotificationDTO {
 
     private long notificationId;
 
-//    @NotNull(message = "User is required")
+    @NotNull(message = "User is required")
     private Long userId;
 
     private String username;
 
-//    @NotBlank(message = "Message is required")
+    @NotBlank(message = "Message is required")
     private String message;
 
     private boolean isRead;

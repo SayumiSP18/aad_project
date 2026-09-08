@@ -1,8 +1,11 @@
 package com.example.aad_project.dto;
 
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -11,18 +14,18 @@ public class VehicleDTO {
 
     private long vehicleId;
 
-//    @NotNull(message = "Driver is required")
+    @NotNull(message = "Driver is required")
     private Long driverId;
 
     private String driverUsername;
 
-//    @NotBlank(message = "Vehicle number is required")
+    @NotBlank(message = "Vehicle number is required")
     private String vehicleNo;
 
-//    @NotBlank(message = "Vehicle type is required")
+    @NotBlank(message = "Vehicle type is required")
     private String type;
 
-//    @Positive(message = "Capacity must be greater than 0")
+    @Positive(message = "Capacity must be greater than 0")
     private double capacityKg;
 
     public VehicleDTO(long vehicleId, long driverId, String driverUsername, String vehicleNo, String type, double capacityKg) {
@@ -32,4 +35,5 @@ public class VehicleDTO {
         this.vehicleNo = vehicleNo;
         this.type = type;
         this.capacityKg = capacityKg;
-    }}
+    }
+}

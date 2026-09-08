@@ -4,8 +4,8 @@ import com.example.aad_project.enumaration.ComplaintStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,17 +15,17 @@ public class ComplaintDTO {
 
     private long complaintId;
 
-//    @NotNull(message = "Customer is required")
+    @NotNull(message = "Customer is required")
     private Long customerId;
 
     private String customerName;
 
-//    @NotNull(message = "Parcel is required")
+    @NotNull(message = "Parcel is required")
     private Long parcelId;
 
     private String trackingNo;
 
-//    @NotBlank(message = "Description is required")
+    @NotBlank(message = "Description is required")
     private String description;
 
     private ComplaintStatus status;
@@ -41,4 +41,5 @@ public class ComplaintDTO {
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
-    }}
+    }
+}

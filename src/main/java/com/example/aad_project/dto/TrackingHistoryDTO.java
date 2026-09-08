@@ -3,7 +3,8 @@ package com.example.aad_project.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,12 +14,12 @@ public class TrackingHistoryDTO {
 
     private long historyId;
 
-//    @NotNull(message = "Parcel is required")
+    @NotNull(message = "Parcel is required")
     private Long parcelId;
 
     private String trackingNo;
 
-//    @NotBlank(message = "Status is required")
+    @NotBlank(message = "Status is required")
     private String status;
 
     private String location;

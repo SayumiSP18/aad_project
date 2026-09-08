@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -14,17 +16,17 @@ public class DeliveryDTO {
 
     private long deliveryId;
 
-//    @NotNull(message = "Parcel is required")
+    @NotNull(message = "Parcel is required")
     private Long parcelId;
 
     private String trackingNo;
 
-//    @NotNull(message = "Driver is required")
+    @NotNull(message = "Driver is required")
     private Long driverId;
 
     private String driverUsername;
 
-//    @NotNull(message = "Vehicle is required")
+    @NotNull(message = "Vehicle is required")
     private Long vehicleId;
 
     private String vehicleNo;

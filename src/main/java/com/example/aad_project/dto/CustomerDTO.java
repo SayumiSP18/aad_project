@@ -3,6 +3,8 @@ package com.example.aad_project.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -13,8 +15,8 @@ public class CustomerDTO {
     private Long userId;
     private String username;
 
-//    @NotBlank(message = "Full name is required")
+    @NotBlank(message = "Full name is required")
     private String fullName;
 
-//    @NotBlank(message = "Address is required")
+    @NotBlank(message = "Address is required")
     private String address;}

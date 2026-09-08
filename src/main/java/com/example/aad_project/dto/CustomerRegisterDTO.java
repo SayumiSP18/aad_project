@@ -1,24 +1,27 @@
 package com.example.aad_project.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerRegisterDTO {
 
-//    @NotBlank(message = "Username is required")
-//    @Size(min = 4, max = 30, message = "Username must be between 4 and 30 characters")
+    @NotBlank(message = "Username is required")
+    @Size(min = 4, max = 30, message = "Username must be between 4 and 30 characters")
     private String username;
 
-//    @NotBlank(message = "Password is required")
-//    @Size(min = 6, message = "Password must be at least 6 characters")
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-//    @NotBlank(message = "Full name is required")
+    @NotBlank(message = "Full name is required")
     private String fullName;
 
-//    @NotBlank(message = "Address is required")
+    @NotBlank(message = "Address is required")
     private String address;}

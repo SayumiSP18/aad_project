@@ -1,11 +1,14 @@
 package com.example.aad_project.dto;
 
 import com.example.aad_project.enumaration.PaymentStatus;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -14,13 +17,13 @@ public class PaymentDTO {
 
     private long paymentId;
 
-//    @NotNull(message = "Booking is required")
+    @NotNull(message = "Booking is required")
     private Long bookingId;
 
-//    @Positive(message = "Amount must be greater than 0")
+    @Positive(message = "Amount must be greater than 0")
     private double amount;
 
-//    @NotBlank(message = "Payment method is required")
+    @NotBlank(message = "Payment method is required")
     private String paymentMethod;
 
     private PaymentStatus status;
