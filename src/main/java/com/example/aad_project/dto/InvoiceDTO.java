@@ -26,4 +26,5 @@ public class InvoiceDTO {
         this.paymentId = paymentId;
         this.invoiceNo = invoiceNo;
         this.issuedDate = issuedDate;
-    }}
+    }
+}

@@ -20,5 +20,5 @@ public class DriverDTO {
     private LocalDate licenseExpiry;
     private String currentVehiclePlate;
     private String branchName;
-    private boolean available;
+    private Boolean available;
 }

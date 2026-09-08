@@ -2,6 +2,7 @@ package com.example.aad_project.controller;
 
 import com.example.aad_project.constant.CommonResponse;
 import com.example.aad_project.dto.DeliveryDTO;
+import com.example.aad_project.dto.DeliveryStatusPatchDTO;
 import com.example.aad_project.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,15 @@ public class DeliveryController {
     public CommonResponse updateDelivery(@Valid @RequestBody DeliveryDTO deliveryDTO) {
         deliveryService.updateDelivery(deliveryDTO);
         return new CommonResponse(0, "Delivery updated");
+    }
+
+    @PatchMapping(value = "/{deliveryId}/status", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse updateDeliveryStatus(
+            @PathVariable long deliveryId,
+            @RequestBody DeliveryStatusPatchDTO request) {
+
+        deliveryService.updateDeliveryStatus(deliveryId, request.getStatus());
+        return new CommonResponse(0, "Delivery status updated");
     }
 
     @DeleteMapping(value = "/{deliveryId}", produces = MediaType.APPLICATION_JSON_VALUE)

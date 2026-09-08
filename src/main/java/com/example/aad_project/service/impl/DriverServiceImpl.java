@@ -124,10 +124,17 @@ public class DriverServiceImpl implements DriverService {
             driver.setLicenseNo(driverDTO.getLicenseNumber());
         }
 
-        driver.setLicenseExpiry(driverDTO.getLicenseExpiry());
-        driver.setCurrentVehiclePlate(driverDTO.getCurrentVehiclePlate());
-        driver.setAvailable(driverDTO.isAvailable());
+        if (driverDTO.getLicenseExpiry() != null) {
+            driver.setLicenseExpiry(driverDTO.getLicenseExpiry());
+        }
 
+        if (driverDTO.getCurrentVehiclePlate() != null
+                && !driverDTO.getCurrentVehiclePlate().isBlank()) {
+            driver.setCurrentVehiclePlate(driverDTO.getCurrentVehiclePlate());
+        }
+        if (driverDTO.getAvailable() != null) {
+            driver.setAvailable(driverDTO.getAvailable());
+        }
         driverRepository.save(driver);
 
         log.info("Driver updated: {}", driver.getDriverId());

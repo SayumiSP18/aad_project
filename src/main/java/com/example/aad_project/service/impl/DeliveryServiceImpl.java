@@ -81,6 +81,14 @@ public class DeliveryServiceImpl implements DeliveryService {
         deliveryRepository.save(delivery);
     }
 
+    public void updateDeliveryStatus(long deliveryId, ParcelStatus status) {
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new CustomException(404, "Delivery not found"));
+
+        delivery.setStatus(status);
+        deliveryRepository.save(delivery);
+    }
+
     @Override
     public void deleteDelivery(long deliveryId) {
         if (!deliveryRepository.existsById(deliveryId))
