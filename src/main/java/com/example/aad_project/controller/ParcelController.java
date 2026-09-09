@@ -53,4 +53,5 @@ public class ParcelController {
     public CommonResponse deleteParcel(@PathVariable long parcelId) {
         parcelService.deleteParcel(parcelId);
         return new CommonResponse(0, "Parcel deleted");
-    }}
+    }
+}

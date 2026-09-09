@@ -52,4 +52,5 @@ public class VehicleController {
     public CommonResponse deleteVehicle(@PathVariable long vehicleId) {
         vehicleService.deleteVehicle(vehicleId);
         return new CommonResponse(0, "Vehicle deleted");
-    }}
+    }
+}

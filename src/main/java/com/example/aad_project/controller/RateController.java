@@ -52,4 +52,5 @@ public class RateController {
     public CommonResponse deleteRate(@PathVariable long rateId) {
         rateService.deleteRate(rateId);
         return new CommonResponse(0, "Rate deleted");
-    }}
+    }
+}

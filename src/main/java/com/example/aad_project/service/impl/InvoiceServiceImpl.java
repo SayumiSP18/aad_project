@@ -71,4 +71,5 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (!invoiceRepository.existsById(invoiceId))
             throw new CustomException(404, "Invoice not found");
         invoiceRepository.deleteById(invoiceId);
-    }}
+    }
+}

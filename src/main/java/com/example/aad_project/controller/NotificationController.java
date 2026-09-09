@@ -52,4 +52,5 @@ public class NotificationController {
     public CommonResponse deleteNotification(@PathVariable long notificationId) {
         notificationService.deleteNotification(notificationId);
         return new CommonResponse(0, "Notification deleted");
-    }}
+    }
+}

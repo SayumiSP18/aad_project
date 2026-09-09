@@ -7,6 +7,7 @@ import com.example.aad_project.entity.Driver;
 import com.example.aad_project.entity.User;
 //import com.example.aad_project.enumeration.UserRole;
 import com.example.aad_project.entity.Role;
+import com.example.aad_project.exception.CustomException;
 import com.example.aad_project.repository.RoleRepository;
 import com.example.aad_project.repository.BranchRepository;
 import com.example.aad_project.repository.DriverRepository;
@@ -98,16 +99,58 @@ public class DriverServiceImpl implements DriverService {
         return toDTO(driver);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public DriverDTO getMyProfile(String username) {
-        Driver driver = driverRepository.findByUserUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Driver profile not found"
-                ));
+//    @Override
+//    @Transactional(readOnly = true)
+//    public DriverDTO getMyProfile(String username) {
+//        Driver driver = driverRepository.findByUserUsername(username)
+//                .orElseThrow(() -> new ResponseStatusException(
+//                        HttpStatus.NOT_FOUND, "Driver profile not found"
+//                ));
+//
+//        return toDTO(driver);
+//    }
 
-        return toDTO(driver);
+
+
+//    @Override
+//    public DriverDTO getMyProfile(String username) {
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new CustomException("User not found"));
+//
+//        Driver driver = driverRepository.findByUser(user)   // or findByUser_Username / findByUserId
+//                .orElseThrow(() -> new CustomException("Driver profile not found"));
+//
+//        Driver driver = driverRepository.findByUser_UserId(user.getUserId())
+//                .orElseThrow(() -> new CustomException("Driver profile not found"));
+//
+//        return DriverDTO.builder()
+//                .driverId(driver.getDriverId())
+//                .userId(user.getUserId())                 // or user.getUserId() depending on your User entity
+//                .username(user.getUsername())         // ← this was missing → null
+//                .licenseNo(driver.getLicenseNo())     // ← this was missing → null
+//                .branchName(driver.getBranch() != null ? driver.getBranch().getName() : null)
+//                .build();
+//    }
+
+
+    @Override
+    public DriverDTO getMyProfile(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("User not found"));
+
+        Driver driver = driverRepository.findByUser_UserId(user.getUserId())
+                .orElseThrow(() -> new CustomException("Driver profile not found"));
+
+        return DriverDTO.builder()
+                .driverId(driver.getDriverId())
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .licenseNo(driver.getLicenseNo())
+                .branchName(driver.getBranch() != null ? driver.getBranch().getName() : null)
+                .build();
     }
+
+
 
     @Override
     public void updateDriver(DriverDTO driverDTO) {
@@ -169,5 +212,17 @@ public class DriverServiceImpl implements DriverService {
                 .branchName(driver.getBranch().getName())
                 .available(driver.isAvailable())
                 .build();
+
+//        return DriverDTO.builder()
+//                .id(driver.getId())
+//                .driverId(driver.getId())                    // frontend expects driverId
+//                .userId(driver.getUser().getId())
+//                .username(driver.getUser().getUsername())    // ← important
+//                .fullName(driver.getFullName())              // if you have it
+//                .licenseNo(driver.getLicenseNo())            // or getLicenseNumber()
+//                .licenseNumber(driver.getLicenseNo())
+//                .branchName(driver.getBranch().getName())
+//                // … other fields
+//                .build();
     }
 }

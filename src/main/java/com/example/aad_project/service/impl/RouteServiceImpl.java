@@ -79,4 +79,5 @@ public class RouteServiceImpl implements RouteService {
         if (!routeRepository.existsById(routeId))
             throw new CustomException(404, "Route not found");
         routeRepository.deleteById(routeId);
-    }}
+    }
+}

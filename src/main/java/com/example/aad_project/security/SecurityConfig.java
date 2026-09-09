@@ -121,11 +121,15 @@ public class SecurityConfig {
                                 "/js/**"
                         ).permitAll()
 
-                        // Login API
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/v1/auth/login"
+                        // Public auth/registration endpoints
+                        .requestMatchers(HttpMethod.POST,
+                                "/v1/auth/login",
+                                "/v1/customers/register",
+                                "/v1/drivers/register"
                         ).permitAll()
+
+                        // Allow register page to load branch dropdown without a token
+                        .requestMatchers(HttpMethod.GET, "/v1/branches/all").permitAll()
 
                         // Everything else requires JWT
                         .anyRequest().authenticated()
@@ -149,8 +153,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider =
-                new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
 
         authProvider.setPasswordEncoder(passwordEncoder());
 
@@ -171,7 +174,9 @@ public class SecurityConfig {
                 Arrays.asList(
                         "http://localhost:3000",
                         "http://localhost:8080",
-                        "http://127.0.0.1:8080"
+                        "http://127.0.0.1:8080",
+                        "http://localhost:63342",
+                        "http://127.0.0.1:63342"
                 )
         );
 

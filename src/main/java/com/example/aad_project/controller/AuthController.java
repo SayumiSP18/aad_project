@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "v1/auth")
+@RequestMapping("v1/auth")
 @CrossOrigin
 @RequiredArgsConstructor
 public class AuthController {
@@ -19,23 +19,25 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    @GetMapping(value = "/test")
-    public String testSecurity() {
-        return "API Security Successful";
-    }
-
+    /**
+     * Login endpoint used by login.html
+     * Frontend calls: POST /v1/auth/login
+     * Body: { "userName": "...", "password": "..." }
+     */
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse authLogin(@RequestBody AuthDTO authDTO) {
+    public CommonResponse login(@RequestBody AuthDTO authDTO) {
+
+        // Authenticate user (throws exception on invalid credentials)
         UserDTO userDetails = userService.authenticate(authDTO);
+
+        // Generate JWT (contains userId, role, username)
         String token = jwtUtil.generateToken(userDetails);
 
-        UserDataDTO userDataDTO = new UserDataDTO(userDetails.getUserId(), token);
-        return new CommonResponse(0, userDataDTO, "JWT Token");
-    }
+        // Response body expected by frontend
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setUserId(userDetails.getUserId());
+        userDataDTO.setToken(token);
 
-    @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse register(@RequestBody UserDTO userDTO) {
-        userService.saveUser(userDTO);
-        return new CommonResponse(0, "User registered successfully");
+        return new CommonResponse(0, userDataDTO, "JWT Token generated successfully");
     }
 }

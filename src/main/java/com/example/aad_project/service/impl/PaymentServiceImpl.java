@@ -76,4 +76,5 @@ public class PaymentServiceImpl implements PaymentService {
         if (!paymentRepository.existsById(paymentId))
             throw new CustomException(404, "Payment not found");
         paymentRepository.deleteById(paymentId);
-    }}
+    }
+}

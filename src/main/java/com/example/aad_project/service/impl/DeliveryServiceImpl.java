@@ -94,4 +94,5 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (!deliveryRepository.existsById(deliveryId))
             throw new CustomException(404, "Delivery not found");
         deliveryRepository.deleteById(deliveryId);
-    }}
+    }
+}

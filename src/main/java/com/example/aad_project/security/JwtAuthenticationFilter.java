@@ -71,11 +71,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+//    private void handleJwtException(HttpServletResponse response, int code, String message) throws IOException {
+//        response.setStatus(HttpStatus.OK.value());
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//
+//        CommonResponse errorResponse = new CommonResponse(code, message);
+//        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+//    }
+
     private void handleJwtException(HttpServletResponse response, int code, String message) throws IOException {
-        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(code);   // use the actual code passed in
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         CommonResponse errorResponse = new CommonResponse(code, message);
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
+
 }

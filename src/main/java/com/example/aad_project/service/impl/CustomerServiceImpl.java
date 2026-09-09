@@ -94,4 +94,5 @@ public class CustomerServiceImpl implements CustomerService {
         if (!customerRepository.existsById(customerId))
             throw new CustomException(404, "Customer not found");
         customerRepository.deleteById(customerId);
-    }}
+    }
+}

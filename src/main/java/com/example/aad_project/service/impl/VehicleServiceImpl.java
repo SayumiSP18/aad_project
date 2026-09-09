@@ -73,4 +73,5 @@ public class VehicleServiceImpl implements VehicleService {
         if (!vehicleRepository.existsById(vehicleId))
             throw new CustomException(404, "Vehicle not found");
         vehicleRepository.deleteById(vehicleId);
-    }}
+    }
+}

@@ -77,4 +77,5 @@ public class ParcelServiceImpl implements ParcelService {
         if (!parcelRepository.existsById(parcelId))
             throw new CustomException(404, "Parcel not found");
         parcelRepository.deleteById(parcelId);
-    }}
+    }
+}
