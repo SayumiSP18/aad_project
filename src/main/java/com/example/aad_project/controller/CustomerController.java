@@ -7,6 +7,7 @@ import com.example.aad_project.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -38,7 +39,9 @@ public class CustomerController {
         return new CommonResponse(0, customers, "Filter customers");
     }
 
-    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+@PreAuthorize("hasRole('CUSTOMER')")
+@GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResponse getMyProfile(Principal principal) {
         CustomerDTO dto = customerService.getMyProfile(principal.getName());
         return new CommonResponse(0, dto, "My profile");

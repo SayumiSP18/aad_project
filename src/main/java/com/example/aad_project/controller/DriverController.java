@@ -6,6 +6,8 @@ import com.example.aad_project.dto.DriverRegisterDTO;
 import com.example.aad_project.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -38,10 +40,17 @@ public class DriverController {
         return new CommonResponse(0, drivers, "Filter drivers");
     }
 
+//    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public CommonResponse getMyProfile(Principal principal) {
+//        DriverDTO dto = driverService.getMyProfile(principal.getName());
+//        return new CommonResponse(0, dto, "My profile");
+//    }
+
+    @PreAuthorize("hasRole('DRIVER')")
     @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse getMyProfile(Principal principal) {
-        DriverDTO dto = driverService.getMyProfile(principal.getName());
-        return new CommonResponse(0, dto, "My profile");
+    public CommonResponse getMyProfile() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return new CommonResponse(0, driverService.getMyProfile(username), "My profile");
     }
 
     @GetMapping(value = "/{driverId}", produces = MediaType.APPLICATION_JSON_VALUE)
