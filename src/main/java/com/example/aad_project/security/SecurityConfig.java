@@ -118,7 +118,8 @@ public class SecurityConfig {
                                 "/login.html",
                                 "/register.html",
                                 "/css/**",
-                                "/js/**"
+                                "/js/**",
+                                "/dashboard.html"
                         ).permitAll()
 
                         // Public auth/registration endpoints

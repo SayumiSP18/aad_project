@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="dashboard-grid">
+    <canvas id="statusChart"></canvas>
+    <canvas id="dailyChart"></canvas>
+    <canvas id="driverChart"></canvas>
+    <canvas id="branchChart"></canvas>
+</div>
+
+<script>
+    const token = localStorage.getItem('JWT'); // match your existing storage key
+
+    async function fetchJSON(url) {
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        const body = await res.json();
+        return body.data; // adjust to match your CommonResponse field name
+    }
+
+    async function renderStatus() {
+        const data = await fetchJSON('/v1/analytics/status-summary');
+        new Chart(document.getElementById('statusChart'), {
+            type: 'pie',
+            data: { labels: Object.keys(data), datasets: [{ data: Object.values(data) }] },
+            options: { plugins: { title: { display: true, text: 'Deliveries by Status' } } }
+        });
+    }
+
+    async function renderDaily() {
+        const data = await fetchJSON('/v1/analytics/deliveries-per-day?days=14');
+        new Chart(document.getElementById('dailyChart'), {
+            type: 'line',
+            data: { labels: Object.keys(data), datasets: [{ label: 'Deliveries', data: Object.values(data) }] },
+            options: { plugins: { title: { display: true, text: 'Daily Delivery Volume (14 days)' } } }
+        });
+    }
+
+    async function renderDrivers() {
+        const list = await fetchJSON('/v1/analytics/top-drivers');
+        new Chart(document.getElementById('driverChart'), {
+            type: 'bar',
+            data: {
+                labels: list.map(d => d.driver),
+                datasets: [{ label: 'Completed Deliveries', data: list.map(d => d.completed) }]
+            },
+            options: { plugins: { title: { display: true, text: 'Top 5 Drivers' } } }
+        });
+    }
+
+    async function renderBranch() {
+        const data = await fetchJSON('/v1/analytics/branch-load');
+        new Chart(document.getElementById('branchChart'), {
+            type: 'bar',
+            data: { labels: Object.keys(data), datasets: [{ label: 'Deliveries', data: Object.values(data) }] },
+            options: { plugins: { title: { display: true, text: 'Load by Branch' } } }
+        });
+    }
+
+    renderStatus(); renderDaily(); renderDrivers(); renderBranch();
+</script>
+</body>
+</html>

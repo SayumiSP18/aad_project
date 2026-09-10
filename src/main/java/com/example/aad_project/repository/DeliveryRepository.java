@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +31,28 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
             "d.route.routeId, d.status, d.deliveredAt) FROM Delivery d " +
             "WHERE (:driverId IS NULL OR d.driver.driverId = :driverId)")
     List<DeliveryDTO> filterDeliveries(@Param("driverId") Long driverId);
+
+
+
+
+
+
+
+    @Query("SELECT d.status, COUNT(d) FROM Delivery d GROUP BY d.status")
+    List<Object[]> countByStatus();
+
+    @Query("SELECT d.driver.user.username, COUNT(d) FROM Delivery d " +
+            "WHERE d.status = 'DELIVERED' GROUP BY d.driver.user.username " +
+            "ORDER BY COUNT(d) DESC")
+    List<Object[]> topDrivers();
+
+    @Query("SELECT d.driver.branch.name, COUNT(d) " +
+            "FROM Delivery d GROUP BY d.driver.branch.name")
+    List<Object[]> countByBranch();
+
+    @Query("SELECT FUNCTION('DATE', d.deliveredAt), COUNT(d) " +
+            "FROM Delivery d WHERE d.deliveredAt >= :since " +
+            "GROUP BY FUNCTION('DATE', d.deliveredAt) ORDER BY FUNCTION('DATE', d.deliveredAt)")
+    List<Object[]> countPerDaySince(@Param("since") LocalDateTime since);
+
 }
