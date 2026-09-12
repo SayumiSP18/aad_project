@@ -368,8 +368,24 @@ td code, td .track-id {
     font-size: 14px;
 }
 
-
-
+/* ---------- Analytics dashboard ---------- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+.chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: 18px;
+    height: 320px;
+    position: relative;
+}
+@media (max-width: 860px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+}
 
 
 /* Floating chat toggle button */
@@ -497,10 +513,6 @@ td code, td .track-id {
 .chat-input-row button:hover {
     opacity: 0.9;
 }
-
-
-
-
 
 
 /* ---------- Responsive ---------- */

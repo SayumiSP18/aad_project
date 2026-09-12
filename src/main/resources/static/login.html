@@ -60,7 +60,9 @@
                 } else if (role === "DRIVER") {
                     location.href = "driver.html";
                 } else {
-                    location.href = "index.html";
+                    // ADMIN/STAFF land on the analytics dashboard first;
+                    // "Manage Records" in its sidebar links through to index.html.
+                    location.href = "dashboard.html";
                 }
             })
             .catch(function (err) {

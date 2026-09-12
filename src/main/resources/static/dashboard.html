@@ -7,20 +7,48 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<div class="dashboard-grid">
-    <canvas id="statusChart"></canvas>
-    <canvas id="dailyChart"></canvas>
-    <canvas id="driverChart"></canvas>
-    <canvas id="branchChart"></canvas>
+<div class="app-shell">
+    <div class="sidebar">
+        <h1>Courier Service</h1>
+        <div class="group-label">Overview</div>
+        <a class="active">Analytics</a>
+        <a onclick="location.href='index.html'">Manage Records</a>
+        <a class="logout" id="logoutBtn">Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <h2>Analytics Dashboard</h2>
+            <div class="userchip">
+                Logged in as <b id="topUsername"></b> (<span id="topRole"></span>)
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="chart-card"><canvas id="statusChart"></canvas></div>
+            <div class="chart-card"><canvas id="dailyChart"></canvas></div>
+            <div class="chart-card"><canvas id="driverChart"></canvas></div>
+            <div class="chart-card"><canvas id="branchChart"></canvas></div>
+        </div>
+    </div>
 </div>
 
+<script src="js/api.js"></script>
 <script>
-    const token = localStorage.getItem('JWT'); // match your existing storage key
+    requireRole(["ADMIN", "STAFF"]);
+    document.getElementById("topUsername").textContent = localStorage.getItem("username") || "";
+    document.getElementById("topRole").textContent = localStorage.getItem("role") || "";
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+        localStorage.clear();
+        location.href = "login.html";
+    });
+
+    const token = localStorage.getItem('JWT'); // matches the key used across the app
 
     async function fetchJSON(url) {
         const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
         const body = await res.json();
-        return body.data; // adjust to match your CommonResponse field name
+        return body.body; // CommonResponse's data field is named "body", not "data"
     }
 
     async function renderStatus() {
@@ -28,7 +56,7 @@
         new Chart(document.getElementById('statusChart'), {
             type: 'pie',
             data: { labels: Object.keys(data), datasets: [{ data: Object.values(data) }] },
-            options: { plugins: { title: { display: true, text: 'Deliveries by Status' } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Deliveries by Status' } } }
         });
     }
 
@@ -37,7 +65,7 @@
         new Chart(document.getElementById('dailyChart'), {
             type: 'line',
             data: { labels: Object.keys(data), datasets: [{ label: 'Deliveries', data: Object.values(data) }] },
-            options: { plugins: { title: { display: true, text: 'Daily Delivery Volume (14 days)' } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Daily Delivery Volume (14 days)' } } }
         });
     }
 
@@ -49,7 +77,7 @@
                 labels: list.map(d => d.driver),
                 datasets: [{ label: 'Completed Deliveries', data: list.map(d => d.completed) }]
             },
-            options: { plugins: { title: { display: true, text: 'Top 5 Drivers' } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Top 5 Drivers' } } }
         });
     }
 
@@ -58,7 +86,7 @@
         new Chart(document.getElementById('branchChart'), {
             type: 'bar',
             data: { labels: Object.keys(data), datasets: [{ label: 'Deliveries', data: Object.values(data) }] },
-            options: { plugins: { title: { display: true, text: 'Load by Branch' } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Load by Branch' } } }
         });
     }
 
