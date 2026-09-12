@@ -126,6 +126,7 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/i18n/**",
+                                "/assets/**",
                                 "/dashboard.html"
                         ).permitAll()
 

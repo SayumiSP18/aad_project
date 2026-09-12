@@ -368,6 +368,50 @@ td code, td .track-id {
     font-size: 14px;
 }
 
+
+
+/* Logo Styling */
+.logo-container {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.auth-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 50%; /* Remove this line if you prefer a square logo */
+}
+
+/* Input Fields with Icons */
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 10px 10px 10px 36px; /* Extra left padding to make space for icon */
+    box-sizing: border-box;
+}
+
+
+
+
+
+
 /* ---------- Analytics dashboard ---------- */
 .dashboard-grid {
     display: grid;
@@ -522,3 +566,5 @@ td code, td .track-id {
     .main { padding: 20px; }
     .auth-card { width: 90vw; padding: 28px 24px; }
 }
+
+
