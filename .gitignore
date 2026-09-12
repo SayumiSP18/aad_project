@@ -31,3 +31,26 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Compiled output
+target/
+*.class
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+
+
+# Application secrets - CRITICAL
+src/main/resources/application-secrets.properties
+application-local.properties
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

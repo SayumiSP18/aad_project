@@ -28,5 +28,8 @@ public interface ParcelRepository extends JpaRepository<Parcel, Long> {
             "p.trackingNo, p.weight, p.description, p.receiverName, p.receiverAddress, p.status) " +
             "FROM Parcel p WHERE (:customerId IS NULL OR p.customer.customerId = :customerId) " +
             "AND (:trackingNo IS NULL OR p.trackingNo LIKE %:trackingNo%)")
+
     List<ParcelDTO> filterParcels(@Param("customerId") Long customerId, @Param("trackingNo") String trackingNo);
+
+    List<Parcel> findTop5ByCustomer_User_UsernameOrderByParcelIdDesc(String username);
 }
