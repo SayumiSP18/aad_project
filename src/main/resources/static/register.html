@@ -5,6 +5,8 @@
     <title>Register - Courier Service</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/jpg" href="assets/OIP2.jpg">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/i18n.js"></script>
 </head>
@@ -12,6 +14,11 @@
 
 <div class="auth-wrapper">
     <div class="auth-card">
+        <!-- Logo Header -->
+        <div class="logo-container">
+            <img src="assets/OIP2.jpg" alt="Courier Service Logo" class="auth-logo">
+        </div>
+
         <h2>Register</h2>
 
         <div class="role-toggle">
@@ -20,10 +27,16 @@
         </div>
 
         <label for="username">Username</label>
-        <input type="text" id="username" required>
+        <div class="input-wrapper">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input type="text" id="username" placeholder="Enter your username" required>
+        </div>
 
         <label for="password">Password</label>
-        <input type="password" id="password" required>
+        <div class="input-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
 
         <!-- Customer fields -->
         <div id="customerFields">
