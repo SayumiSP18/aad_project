@@ -117,8 +117,13 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/login.html",
                                 "/register.html",
+                                "/customer.html",
+                                "/driver.html",
+                                "/index.html",
+                                "/UserManagement.html",
                                 "/css/**",
                                 "/js/**",
+                                "/i18n/**",
                                 "/dashboard.html"
                         ).permitAll()
 

@@ -1,5 +1,6 @@
 async function sendChatMessage(message) {
-    const token = localStorage.getItem('jwtToken');
+    // const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem('JWT');
     const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {
