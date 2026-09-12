@@ -35,3 +35,11 @@ document.getElementById('chatSendBtn').addEventListener('click', () => {
         input.value = '';
     }
 });
+
+document.getElementById('chatToggleBtn').addEventListener('click', () => {
+    document.getElementById('chatWidget').classList.toggle('hidden');
+});
+
+document.getElementById('chatCloseBtn').addEventListener('click', () => {
+    document.getElementById('chatWidget').classList.add('hidden');
+});

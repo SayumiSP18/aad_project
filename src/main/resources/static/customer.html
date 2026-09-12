@@ -106,11 +106,20 @@
 
 
 
-<div id="chatWidget" style="border:1px solid #ccc; border-radius:8px; padding:12px; max-width:400px; margin-bottom:20px;">
-    <h3>Delivery Assistant</h3>
-    <div id="chatMessages" style="height:200px; overflow-y:auto; border:1px solid #eee; padding:8px; margin-bottom:8px;"></div>
-    <input type="text" id="chatInput" placeholder="Ask about your delivery..." style="width:70%; padding:6px;">
-    <button id="chatSendBtn" style="padding:6px 12px;">Send</button>
+<!-- Floating chat toggle button -->
+<button id="chatToggleBtn" class="chat-toggle-btn">💬</button>
+
+<!-- Chat widget panel -->
+<div id="chatWidget" class="chat-widget hidden">
+    <div class="chat-header">
+        <span>Delivery Assistant</span>
+        <button id="chatCloseBtn" class="chat-close-btn">&times;</button>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Ask about your delivery...">
+        <button id="chatSendBtn">Send</button>
+    </div>
 </div>
 
 
