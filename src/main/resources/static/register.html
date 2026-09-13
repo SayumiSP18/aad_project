@@ -5,7 +5,6 @@
     <title>Register - Courier Service</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/jpg" href="assets/OIP2.jpg">
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/i18n.js"></script>
@@ -14,53 +13,55 @@
 
 <div class="auth-wrapper">
     <div class="auth-card">
-        <!-- Logo Header -->
+        <select id="langSwitcher" class="lang-switcher">
+            <option value="en">English</option>
+            <option value="si">සිංහල</option>
+        </select>
+
         <div class="logo-container">
             <img src="assets/OIP2.jpg" alt="Courier Service Logo" class="auth-logo">
         </div>
 
-        <h2>Register</h2>
+        <h2 data-i18n="register.pageTitle">Register</h2>
 
         <div class="role-toggle">
-            <button type="button" id="tabCustomer" class="active" onclick="switchTab('customer')">Customer</button>
-            <button type="button" id="tabDriver" onclick="switchTab('driver')">Driver</button>
+            <button type="button" id="tabCustomer" class="active" onclick="switchTab('customer')" data-i18n="register.tabCustomer">Customer</button>
+            <button type="button" id="tabDriver" onclick="switchTab('driver')" data-i18n="register.tabDriver">Driver</button>
         </div>
 
-        <label for="username">Username</label>
+        <label for="username" data-i18n="login.username">Username</label>
         <div class="input-wrapper">
             <i class="fa-solid fa-user input-icon"></i>
-            <input type="text" id="username" placeholder="Enter your username" required>
+            <input type="text" id="username" placeholder="Enter your username" data-i18n-placeholder="login.usernamePlaceholder" required>
         </div>
 
-        <label for="password">Password</label>
+        <label for="password" data-i18n="login.password">Password</label>
         <div class="input-wrapper">
             <i class="fa-solid fa-lock input-icon"></i>
-            <input type="password" id="password" placeholder="Enter your password" required>
+            <input type="password" id="password" placeholder="Enter your password" data-i18n-placeholder="login.passwordPlaceholder" required>
         </div>
 
-        <!-- Customer fields -->
         <div id="customerFields">
-            <label for="fullName">Full Name</label>
+            <label for="fullName" data-i18n="register.fullName">Full Name</label>
             <input type="text" id="fullName">
 
-            <label for="address">Address</label>
+            <label for="address" data-i18n="register.address">Address</label>
             <input type="text" id="address">
         </div>
 
-        <!-- Driver fields -->
         <div id="driverFields" style="display:none;">
-            <label for="licenseNo">License No</label>
+            <label for="licenseNo" data-i18n="register.licenseNumber">License No</label>
             <input type="text" id="licenseNo">
 
-            <label for="branchId">Branch</label>
+            <label for="branchId" data-i18n="register.branch">Branch</label>
             <select id="branchId"></select>
         </div>
 
-        <button type="button" onclick="handleRegister()">Register</button>
+        <button type="button" onclick="handleRegister()" data-i18n="register.submit">Register</button>
         <div class="err-msg" id="errMsg"></div>
 
         <div class="auth-links">
-            Already have an account? <a href="login.html">Login</a>
+            <span data-i18n="register.haveAccount">Already have an account?</span> <a href="login.html" data-i18n="register.loginLink">Login</a>
         </div>
     </div>
 </div>
@@ -93,7 +94,7 @@
         $('#errMsg').text("");
 
         if (!username || !password) {
-            $('#errMsg').text("Username and password are required");
+            $('#errMsg').text(t('errors.credentialsRequired'));
             return;
         }
 
@@ -102,7 +103,7 @@
             const fullName = $('#fullName').val().trim();
             const address = $('#address').val().trim();
             if (!fullName || !address) {
-                $('#errMsg').text("Full name and address are required");
+                $('#errMsg').text(t('errors.fullNameAddressRequired'));
                 return;
             }
             url = "/v1/customers/register";
@@ -111,7 +112,7 @@
             const licenseNo = $('#licenseNo').val().trim();
             const branchId = $('#branchId').val();
             if (!licenseNo || !branchId) {
-                $('#errMsg').text("License number and branch are required");
+                $('#errMsg').text(t('errors.licenseBranchRequired'));
                 return;
             }
             url = "/v1/drivers/register";
@@ -120,11 +121,11 @@
 
         apiCall("POST", url, payload)
             .then(function (response) {
-                alert(response.message || "Registered successfully");
+                alert(response.message || t('register.success'));
                 location.href = "login.html";
             })
             .catch(function (err) {
-                $('#errMsg').text(err.message || "Registration failed");
+                $('#errMsg').text(err.message || t('errors.generic'));
             });
     }
 </script>

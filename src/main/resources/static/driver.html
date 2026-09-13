@@ -12,10 +12,15 @@
 
 <div class="app-shell">
     <div class="sidebar">
-        <h1><img src="assets/OIP2.jpg" class="sidebar-logo"> Courier Service</h1>
-        <div class="group-label">Driver</div>
-        <a class="active">My Deliveries</a>
-        <a class="logout" id="logoutBtn">Logout</a>
+        <h1><img src="assets/OIP2.jpg" class="sidebar-logo"> <span data-i18n="app.title">Courier Service</span></h1>
+        <div class="group-label" data-i18n="sidebar.driver">Driver</div>
+        <a class="active" data-i18n="deliveries.myDeliveries">My Deliveries</a>
+        <a class="logout" id="logoutBtn" data-i18n="common.logout">Logout</a>
+
+        <select id="langSwitcher" class="lang-switcher">
+            <option value="en">English</option>
+            <option value="si">සිංහල</option>
+        </select>
     </div>
 
     <div class="main">

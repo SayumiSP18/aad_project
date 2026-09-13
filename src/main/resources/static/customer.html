@@ -12,13 +12,17 @@
 
 <div class="app-shell">
     <div class="sidebar">
-<!--        <h1>Courier Service</h1>-->
-        <h1><img src="assets/OIP2.jpg" class="sidebar-logo"> Courier Service</h1>
-        <div class="group-label">Customer</div>
-        <a data-tab="parcels" class="active" onclick="showTab('parcels')">My Parcels</a>
-        <a data-tab="complaints" onclick="showTab('complaints')">My Complaints</a>
-        <a data-tab="notifications" onclick="showTab('notifications')">Notifications</a>
-        <a class="logout" id="logoutBtn">Logout</a>
+        <h1><img src="assets/OIP2.jpg" class="sidebar-logo"> <span data-i18n="app.title">Courier Service</span></h1>
+        <div class="group-label" data-i18n="sidebar.customer">Customer</div>
+        <a data-tab="parcels" class="active" onclick="showTab('parcels')" data-i18n="parcels.myParcels">My Parcels</a>
+        <a data-tab="complaints" onclick="showTab('complaints')" data-i18n="complaints.myComplaints">My Complaints</a>
+        <a data-tab="notifications" onclick="showTab('notifications')" data-i18n="notifications.title">Notifications</a>
+        <a class="logout" id="logoutBtn" data-i18n="common.logout">Logout</a>
+
+        <select id="langSwitcher" class="lang-switcher">
+            <option value="en">English</option>
+            <option value="si">සිංහල</option>
+        </select>
     </div>
 
     <div class="main">

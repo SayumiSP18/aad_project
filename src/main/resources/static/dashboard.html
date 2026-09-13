@@ -6,22 +6,28 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/jpg" href="assets/OIP2.jpg">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/i18n.js"></script>
 </head>
 <body>
 <div class="app-shell">
     <div class="sidebar">
-        <h1><img src="assets/OIP2.jpg" class="sidebar-logo"> Courier Service</h1>
-        <div class="group-label">Overview</div>
-        <a class="active">Analytics</a>
-        <a onclick="location.href='index.html'">Manage Records</a>
-        <a class="logout" id="logoutBtn">Logout</a>
+        <h1><img src="assets/OIP2.jpg" class="sidebar-logo"> <span data-i18n="app.title">Courier Service</span></h1>
+        <div class="group-label" data-i18n="nav.overview">Overview</div>
+        <a class="active" data-i18n="nav.analytics">Analytics</a>
+        <a onclick="location.href='index.html'" data-i18n="nav.manageRecords">Manage Records</a>
+        <a class="logout" id="logoutBtn" data-i18n="common.logout">Logout</a>
+
+        <select id="langSwitcher" class="lang-switcher">
+            <option value="en">English</option>
+            <option value="si">සිංහල</option>
+        </select>
     </div>
 
     <div class="main">
         <div class="topbar">
-            <h2>Analytics Dashboard</h2>
+            <h2 data-i18n="dashboard.analyticsTitle">Analytics Dashboard</h2>
             <div class="userchip">
-                Logged in as <b id="topUsername"></b> (<span id="topRole"></span>)
+                <span data-i18n="common.loggedInAs">Logged in as</span> <b id="topUsername"></b> (<span id="topRole"></span>)
             </div>
         </div>
 
@@ -44,54 +50,68 @@
         location.href = "login.html";
     });
 
-    const token = localStorage.getItem('JWT'); // matches the key used across the app
+    const token = localStorage.getItem('JWT');
 
     async function fetchJSON(url) {
         const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
         const body = await res.json();
-        return body.body; // CommonResponse's data field is named "body", not "data"
+        return body.body;
     }
+
+    // Chart titles rebuild themselves when the language changes, since Chart.js
+    // bakes the title text into the chart at creation time.
+    let charts = {};
 
     async function renderStatus() {
         const data = await fetchJSON('/v1/analytics/status-summary');
-        new Chart(document.getElementById('statusChart'), {
+        if (charts.status) charts.status.destroy();
+        charts.status = new Chart(document.getElementById('statusChart'), {
             type: 'pie',
             data: { labels: Object.keys(data), datasets: [{ data: Object.values(data) }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Deliveries by Status' } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: t('charts.byStatus') } } }
         });
     }
 
     async function renderDaily() {
         const data = await fetchJSON('/v1/analytics/deliveries-per-day?days=14');
-        new Chart(document.getElementById('dailyChart'), {
+        if (charts.daily) charts.daily.destroy();
+        charts.daily = new Chart(document.getElementById('dailyChart'), {
             type: 'line',
-            data: { labels: Object.keys(data), datasets: [{ label: 'Deliveries', data: Object.values(data) }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Daily Delivery Volume (14 days)' } } }
+            data: { labels: Object.keys(data), datasets: [{ label: t('charts.deliveries'), data: Object.values(data) }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: t('charts.dailyVolume') } } }
         });
     }
 
     async function renderDrivers() {
         const list = await fetchJSON('/v1/analytics/top-drivers');
-        new Chart(document.getElementById('driverChart'), {
+        if (charts.driver) charts.driver.destroy();
+        charts.driver = new Chart(document.getElementById('driverChart'), {
             type: 'bar',
             data: {
                 labels: list.map(d => d.driver),
-                datasets: [{ label: 'Completed Deliveries', data: list.map(d => d.completed) }]
+                datasets: [{ label: t('charts.completedDeliveries'), data: list.map(d => d.completed) }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Top 5 Drivers' } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: t('charts.topDrivers') } } }
         });
     }
 
     async function renderBranch() {
         const data = await fetchJSON('/v1/analytics/branch-load');
-        new Chart(document.getElementById('branchChart'), {
+        if (charts.branch) charts.branch.destroy();
+        charts.branch = new Chart(document.getElementById('branchChart'), {
             type: 'bar',
-            data: { labels: Object.keys(data), datasets: [{ label: 'Deliveries', data: Object.values(data) }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Load by Branch' } } }
+            data: { labels: Object.keys(data), datasets: [{ label: t('charts.deliveries'), data: Object.values(data) }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: t('charts.branchLoad') } } }
         });
     }
 
-    renderStatus(); renderDaily(); renderDrivers(); renderBranch();
+    function renderAllCharts() {
+        renderStatus(); renderDaily(); renderDrivers(); renderBranch();
+    }
+
+    renderAllCharts();
+    // Re-render charts (with translated titles) whenever the language switches
+    document.addEventListener('languageChanged', renderAllCharts);
 </script>
 </body>
 </html>

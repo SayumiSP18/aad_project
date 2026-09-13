@@ -439,3 +439,67 @@ td code, td .track-id {
     .main { padding: 20px; }
     .auth-card { width: 90vw; padding: 28px 24px; }
 }
+
+/* ---------- Language switcher ---------- */
+/* Sidebar (dark navy) variant */
+.sidebar .lang-switcher {
+    display: block;
+    margin: 20px 20px 4px;
+    width: calc(100% - 40px);
+    padding: 8px 30px 8px 12px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--navy-rail);
+    border-radius: var(--radius-sm);
+    color: var(--text-on-navy);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23cfd8e6' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+.sidebar .lang-switcher:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--brand);
+}
+.sidebar .lang-switcher:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(37, 84, 160, 0.35);
+}
+.sidebar .lang-switcher option {
+    background-color: var(--navy);
+    color: var(--text-on-navy);
+}
+
+/* Auth card (light) variant — sits at the top of login/register cards */
+.auth-card .lang-switcher {
+    display: block;
+    width: 100%;
+    margin-bottom: 16px;
+    padding: 8px 30px 8px 12px;
+    background-color: var(--canvas);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7486' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.auth-card .lang-switcher:hover { background-color: var(--border-soft); }
+.auth-card .lang-switcher:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-tint);
+}
