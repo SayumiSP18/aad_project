@@ -307,116 +307,163 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public void registerDriver(DriverRegisterDTO registerDTO) {
-        if (userRepository.existsByUsername(registerDTO.getUsername())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Username already exists"
-            );
+        try {
+            if (userRepository.existsByUsername(registerDTO.getUsername())) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT, "Username already exists"
+                );
+            }
+
+            Branch branch = branchRepository.findById(registerDTO.getBranchId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Branch not found"
+                    ));
+
+            User user = new User();
+            user.setUsername(registerDTO.getUsername());
+            user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+            Role driverRole = roleRepository.findByRoleName("DRIVER")
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "DRIVER role not found"
+                    ));
+
+            user.setUserRoles(driverRole);
+            User savedUser = userRepository.save(user);
+
+            Driver driver = new Driver();
+            driver.setUser(savedUser);
+            driver.setBranch(branch);
+            driver.setLicenseNo(registerDTO.getLicenseNo());
+            driver.setAvailable(true);
+
+            driverRepository.save(driver);
+
+            log.info("Driver registered successfully: {}", savedUser.getUsername());
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            log.error("Failed to register driver '{}': {}", registerDTO.getUsername(), e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to register driver");
         }
-
-        Branch branch = branchRepository.findById(registerDTO.getBranchId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Branch not found"
-                ));
-
-        User user = new User();
-        user.setUsername(registerDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        Role driverRole = roleRepository.findByRoleName("DRIVER")
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "DRIVER role not found"
-                ));
-
-        user.setUserRoles(driverRole);
-        User savedUser = userRepository.save(user);
-
-        Driver driver = new Driver();
-        driver.setUser(savedUser);
-        driver.setBranch(branch);
-        driver.setLicenseNo(registerDTO.getLicenseNo());
-        driver.setAvailable(true);
-
-        driverRepository.save(driver);
-
-        log.info("Driver registered successfully: {}", savedUser.getUsername());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<DriverDTO> getAllDrivers() {
-        return driverRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .toList();
+        try {
+            return driverRepository.findAll()
+                    .stream()
+                    .map(this::toDTO)
+                    .toList();
+        } catch (Exception e) {
+            log.error("Failed to fetch drivers: {}", e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch drivers");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<DriverDTO> filterDrivers(Long branchId) {
-        if (branchId == null) {
-            return getAllDrivers();
-        }
+        try {
+            if (branchId == null) {
+                return getAllDrivers();
+            }
 
-        return driverRepository.findByBranchBranchId(branchId)
-                .stream()
-                .map(this::toDTO)
-                .toList();
+            return driverRepository.findByBranchBranchId(branchId)
+                    .stream()
+                    .map(this::toDTO)
+                    .toList();
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            log.error("Failed to filter drivers by branch {}: {}", branchId, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to filter drivers");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public DriverDTO selectDriver(long driverId) {
-        Driver driver = getDriverById(driverId);
-        return toDTO(driver);
+        try {
+            Driver driver = getDriverById(driverId);
+            return toDTO(driver);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            log.error("Failed to fetch driver {}: {}", driverId, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch driver");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public DriverDTO getMyProfile(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found"
-                ));
+        try {
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "User not found"
+                    ));
 
-        Driver driver = driverRepository.findByUser_UserId(user.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Driver profile not found"
-                ));
+            Driver driver = driverRepository.findByUser_UserId(user.getUserId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Driver profile not found"
+                    ));
 
-        return toDTO(driver);
+            return toDTO(driver);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            log.error("Failed to fetch profile for '{}': {}", username, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch driver profile");
+        }
     }
 
     @Override
     public void updateDriver(DriverDTO driverDTO) {
-        if (driverDTO.getId() == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Driver ID is required"
-            );
+        try {
+            if (driverDTO.getId() == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Driver ID is required"
+                );
+            }
+
+            Driver driver = getDriverById(driverDTO.getId());
+
+            if (driverDTO.getLicenseNumber() != null
+                    && !driverDTO.getLicenseNumber().isBlank()) {
+                driver.setLicenseNo(driverDTO.getLicenseNumber());
+            }
+
+            driver.setLicenseExpiry(driverDTO.getLicenseExpiry());
+            driver.setCurrentVehiclePlate(driverDTO.getCurrentVehiclePlate());
+            if (driverDTO.getAvailable() != null) {
+                driver.setAvailable(driverDTO.getAvailable());
+            }
+
+            driverRepository.save(driver);
+
+            log.info("Driver updated: {}", driver.getDriverId());
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            log.error("Failed to update driver {}: {}", driverDTO.getId(), e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update driver");
         }
-
-        Driver driver = getDriverById(driverDTO.getId());
-
-        if (driverDTO.getLicenseNumber() != null
-                && !driverDTO.getLicenseNumber().isBlank()) {
-            driver.setLicenseNo(driverDTO.getLicenseNumber());
-        }
-
-        driver.setLicenseExpiry(driverDTO.getLicenseExpiry());
-        driver.setCurrentVehiclePlate(driverDTO.getCurrentVehiclePlate());
-        if (driverDTO.getAvailable() != null) {
-            driver.setAvailable(driverDTO.getAvailable());
-        }
-
-        driverRepository.save(driver);
-
-        log.info("Driver updated: {}", driver.getDriverId());
     }
 
     @Override
     public void deleteDriver(long driverId) {
-        Driver driver = getDriverById(driverId);
-        driverRepository.delete(driver);
+        try {
+            Driver driver = getDriverById(driverId);
+            driverRepository.delete(driver);
 
-        log.info("Driver deleted: {}", driverId);
+            log.info("Driver deleted: {}", driverId);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            log.error("Failed to delete driver {}: {}", driverId, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete driver");
+        }
     }
 
     private Driver getDriverById(long driverId) {

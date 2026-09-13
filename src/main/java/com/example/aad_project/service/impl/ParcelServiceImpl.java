@@ -25,57 +25,96 @@ public class ParcelServiceImpl implements ParcelService {
 
     @Override
     public void saveParcel(ParcelDTO parcelDTO) {
-        Customer customer = customerRepository.findById(parcelDTO.getCustomerId())
-                .orElseThrow(() -> new CustomException(404, "Customer not found"));
+        try {
+            Customer customer = customerRepository.findById(parcelDTO.getCustomerId())
+                    .orElseThrow(() -> new CustomException(404, "Customer not found"));
 
-        Parcel parcel = new Parcel();
-        parcel.setCustomer(customer);
-        parcel.setTrackingNo("PCL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        parcel.setWeight(parcelDTO.getWeight());
-        parcel.setDescription(parcelDTO.getDescription());
-        parcel.setReceiverName(parcelDTO.getReceiverName());
-        parcel.setReceiverAddress(parcelDTO.getReceiverAddress());
-        parcel.setStatus(ParcelStatus.BOOKED);
-        parcelRepository.save(parcel);
-        log.info("New parcel created with tracking no: {}", parcel.getTrackingNo());
+            Parcel parcel = new Parcel();
+            parcel.setCustomer(customer);
+            parcel.setTrackingNo("PCL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+            parcel.setWeight(parcelDTO.getWeight());
+            parcel.setDescription(parcelDTO.getDescription());
+            parcel.setReceiverName(parcelDTO.getReceiverName());
+            parcel.setReceiverAddress(parcelDTO.getReceiverAddress());
+            parcel.setStatus(ParcelStatus.BOOKED);
+            parcelRepository.save(parcel);
+            log.info("New parcel created with tracking no: {}", parcel.getTrackingNo());
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to save parcel for customer {}: {}", parcelDTO.getCustomerId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to create parcel");
+        }
     }
 
     @Override
     public List<ParcelDTO> getAllParcels() {
-        return parcelRepository.getAllParcels();
+        try {
+            return parcelRepository.getAllParcels();
+        } catch (Exception e) {
+            log.error("Failed to fetch parcels: {}", e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch parcels");
+        }
     }
 
     @Override
     public List<ParcelDTO> filterParcels(Long customerId, String trackingNo) {
-        return parcelRepository.filterParcels(customerId, trackingNo);
+        try {
+            return parcelRepository.filterParcels(customerId, trackingNo);
+        } catch (Exception e) {
+            log.error("Failed to filter parcels (customerId={}, trackingNo={}): {}",
+                    customerId, trackingNo, e.getMessage(), e);
+            throw new CustomException(500, "Failed to filter parcels");
+        }
     }
 
     @Override
     public ParcelDTO selectParcel(long parcelId) {
-        return parcelRepository.selectParcel(parcelId)
-                .orElseThrow(() -> new CustomException(404, "Parcel not found"));
+        try {
+            return parcelRepository.selectParcel(parcelId)
+                    .orElseThrow(() -> new CustomException(404, "Parcel not found"));
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to fetch parcel {}: {}", parcelId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch parcel");
+        }
     }
 
     @Override
     public void updateParcel(ParcelDTO parcelDTO) {
-        Parcel parcel = parcelRepository.findById(parcelDTO.getParcelId())
-                .orElseThrow(() -> new CustomException(404, "Parcel not found"));
+        try {
+            Parcel parcel = parcelRepository.findById(parcelDTO.getParcelId())
+                    .orElseThrow(() -> new CustomException(404, "Parcel not found"));
 
-        parcel.setWeight(parcelDTO.getWeight());
-        parcel.setDescription(parcelDTO.getDescription());
-        parcel.setReceiverName(parcelDTO.getReceiverName());
-        parcel.setReceiverAddress(parcelDTO.getReceiverAddress());
+            parcel.setWeight(parcelDTO.getWeight());
+            parcel.setDescription(parcelDTO.getDescription());
+            parcel.setReceiverName(parcelDTO.getReceiverName());
+            parcel.setReceiverAddress(parcelDTO.getReceiverAddress());
 
-        if (parcelDTO.getStatus() != null)
-            parcel.setStatus(parcelDTO.getStatus());
+            if (parcelDTO.getStatus() != null)
+                parcel.setStatus(parcelDTO.getStatus());
 
-        parcelRepository.save(parcel);
+            parcelRepository.save(parcel);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to update parcel {}: {}", parcelDTO.getParcelId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to update parcel");
+        }
     }
 
     @Override
     public void deleteParcel(long parcelId) {
-        if (!parcelRepository.existsById(parcelId))
-            throw new CustomException(404, "Parcel not found");
-        parcelRepository.deleteById(parcelId);
+        try {
+            if (!parcelRepository.existsById(parcelId))
+                throw new CustomException(404, "Parcel not found");
+            parcelRepository.deleteById(parcelId);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to delete parcel {}: {}", parcelId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to delete parcel");
+        }
     }
 }

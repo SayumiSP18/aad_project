@@ -25,56 +25,94 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void savePayment(PaymentDTO paymentDTO) {
-        if (paymentRepository.findByBooking_BookingId(paymentDTO.getBookingId()).isPresent())
-            throw new CustomException(409, "Payment already recorded for this booking");
+        try {
+            if (paymentRepository.findByBooking_BookingId(paymentDTO.getBookingId()).isPresent())
+                throw new CustomException(409, "Payment already recorded for this booking");
 
-        Booking booking = bookingRepository.findById(paymentDTO.getBookingId())
-                .orElseThrow(() -> new CustomException(404, "Booking not found"));
+            Booking booking = bookingRepository.findById(paymentDTO.getBookingId())
+                    .orElseThrow(() -> new CustomException(404, "Booking not found"));
 
-        Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setAmount(paymentDTO.getAmount());
-        payment.setPaymentMethod(paymentDTO.getPaymentMethod());
-        payment.setStatus(PaymentStatus.PENDING);
-        payment.setPaymentDate(LocalDateTime.now());
-        paymentRepository.save(payment);
-        log.info("New payment recorded for booking: {}", booking.getBookingId());
+            Payment payment = new Payment();
+            payment.setBooking(booking);
+            payment.setAmount(paymentDTO.getAmount());
+            payment.setPaymentMethod(paymentDTO.getPaymentMethod());
+            payment.setStatus(PaymentStatus.PENDING);
+            payment.setPaymentDate(LocalDateTime.now());
+            paymentRepository.save(payment);
+            log.info("New payment recorded for booking: {}", booking.getBookingId());
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to save payment for booking {}: {}", paymentDTO.getBookingId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to record payment");
+        }
     }
 
     @Override
     public List<PaymentDTO> getAllPayments() {
-        return paymentRepository.getAllPayments();
+        try {
+            return paymentRepository.getAllPayments();
+        } catch (Exception e) {
+            log.error("Failed to fetch payments: {}", e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch payments");
+        }
     }
 
     @Override
     public List<PaymentDTO> filterPayments(PaymentStatus status) {
-        return paymentRepository.filterPayments(status);
+        try {
+            return paymentRepository.filterPayments(status);
+        } catch (Exception e) {
+            log.error("Failed to filter payments by status {}: {}", status, e.getMessage(), e);
+            throw new CustomException(500, "Failed to filter payments");
+        }
     }
 
     @Override
     public PaymentDTO selectPayment(long paymentId) {
-        return paymentRepository.selectPayment(paymentId)
-                .orElseThrow(() -> new CustomException(404, "Payment not found"));
+        try {
+            return paymentRepository.selectPayment(paymentId)
+                    .orElseThrow(() -> new CustomException(404, "Payment not found"));
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to fetch payment {}: {}", paymentId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch payment");
+        }
     }
 
     @Override
     public void updatePayment(PaymentDTO paymentDTO) {
-        Payment payment = paymentRepository.findById(paymentDTO.getPaymentId())
-                .orElseThrow(() -> new CustomException(404, "Payment not found"));
+        try {
+            Payment payment = paymentRepository.findById(paymentDTO.getPaymentId())
+                    .orElseThrow(() -> new CustomException(404, "Payment not found"));
 
-        payment.setAmount(paymentDTO.getAmount());
-        payment.setPaymentMethod(paymentDTO.getPaymentMethod());
+            payment.setAmount(paymentDTO.getAmount());
+            payment.setPaymentMethod(paymentDTO.getPaymentMethod());
 
-        if (paymentDTO.getStatus() != null)
-            payment.setStatus(paymentDTO.getStatus());
+            if (paymentDTO.getStatus() != null)
+                payment.setStatus(paymentDTO.getStatus());
 
-        paymentRepository.save(payment);
+            paymentRepository.save(payment);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to update payment {}: {}", paymentDTO.getPaymentId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to update payment");
+        }
     }
 
     @Override
     public void deletePayment(long paymentId) {
-        if (!paymentRepository.existsById(paymentId))
-            throw new CustomException(404, "Payment not found");
-        paymentRepository.deleteById(paymentId);
+        try {
+            if (!paymentRepository.existsById(paymentId))
+                throw new CustomException(404, "Payment not found");
+            paymentRepository.deleteById(paymentId);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to delete payment {}: {}", paymentId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to delete payment");
+        }
     }
 }

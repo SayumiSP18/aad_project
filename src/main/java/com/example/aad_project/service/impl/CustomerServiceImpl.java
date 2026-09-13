@@ -31,68 +31,112 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void registerCustomer(CustomerRegisterDTO registerDTO) {
+        try {
+            if (userRepository.findByUsername(registerDTO.getUsername()).isPresent())
+                throw new CustomException(409, "Username already taken");
 
-        if (userRepository.findByUsername(registerDTO.getUsername()).isPresent())
-            throw new CustomException(409, "Username already taken");
+            Role customerRole = roleRepository.findByRoleName("CUSTOMER")
+                    .orElseThrow(() -> new CustomException(500, "CUSTOMER role not configured"));
 
-        Role customerRole = roleRepository.findByRoleName("CUSTOMER")
-                .orElseThrow(() -> new CustomException(500, "CUSTOMER role not configured"));
+            User user = new User();
+            user.setUsername(registerDTO.getUsername());
+            user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+            user.setUserRoles(customerRole);
+            userRepository.save(user);
 
-        User user = new User();
-        user.setUsername(registerDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        user.setUserRoles(customerRole);
-        userRepository.save(user);
+            Customer customer = new Customer();
+            customer.setUser(user);
+            customer.setFullName(registerDTO.getFullName());
+            customer.setAddress(registerDTO.getAddress());
+            customerRepository.save(customer);
 
-        Customer customer = new Customer();
-        customer.setUser(user);
-        customer.setFullName(registerDTO.getFullName());
-        customer.setAddress(registerDTO.getAddress());
-        customerRepository.save(customer);
-
-        log.info("New customer registered: {}", user.getUsername());
+            log.info("New customer registered: {}", user.getUsername());
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to register customer '{}': {}", registerDTO.getUsername(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to register customer");
+        }
     }
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
-        return customerRepository.getAllCustomers();
+        try {
+            return customerRepository.getAllCustomers();
+        } catch (Exception e) {
+            log.error("Failed to fetch customers: {}", e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch customers");
+        }
     }
 
     @Override
     public List<CustomerDTO> filterCustomers(String fullName) {
-        return customerRepository.filterCustomers(fullName);
+        try {
+            return customerRepository.filterCustomers(fullName);
+        } catch (Exception e) {
+            log.error("Failed to filter customers by name '{}': {}", fullName, e.getMessage(), e);
+            throw new CustomException(500, "Failed to filter customers");
+        }
     }
 
     @Override
     public CustomerDTO selectCustomer(long customerId) {
-        return customerRepository.selectCustomer(customerId)
-                .orElseThrow(() -> new CustomException(404, "Customer not found"));
+        try {
+            return customerRepository.selectCustomer(customerId)
+                    .orElseThrow(() -> new CustomException(404, "Customer not found"));
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to fetch customer {}: {}", customerId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch customer");
+        }
     }
 
     @Override
     public CustomerDTO getMyProfile(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(404, "User not found"));
-        Customer customer = customerRepository.findByUser_UserId(user.getUserId())
-                .orElseThrow(() -> new CustomException(404, "Customer profile not found"));
-        return new CustomerDTO(customer.getCustomerId(), user.getUserId(), user.getUsername(),
-                customer.getFullName(), customer.getAddress());
+        try {
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new CustomException(404, "User not found"));
+            Customer customer = customerRepository.findByUser_UserId(user.getUserId())
+                    .orElseThrow(() -> new CustomException(404, "Customer profile not found"));
+            return new CustomerDTO(customer.getCustomerId(), user.getUserId(), user.getUsername(),
+                    customer.getFullName(), customer.getAddress());
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to fetch profile for '{}': {}", username, e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch customer profile");
+        }
     }
 
     @Override
     public void updateCustomer(CustomerDTO customerDTO) {
-        Customer customer = customerRepository.findById(customerDTO.getCustomerId())
-                .orElseThrow(() -> new CustomException(404, "Customer not found"));
+        try {
+            Customer customer = customerRepository.findById(customerDTO.getCustomerId())
+                    .orElseThrow(() -> new CustomException(404, "Customer not found"));
 
-        customer.setFullName(customerDTO.getFullName());
-        customer.setAddress(customerDTO.getAddress());
-        customerRepository.save(customer);
+            customer.setFullName(customerDTO.getFullName());
+            customer.setAddress(customerDTO.getAddress());
+            customerRepository.save(customer);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to update customer {}: {}", customerDTO.getCustomerId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to update customer");
+        }
     }
 
     @Override
     public void deleteCustomer(long customerId) {
-        if (!customerRepository.existsById(customerId))
-            throw new CustomException(404, "Customer not found");
-        customerRepository.deleteById(customerId);
+        try {
+            if (!customerRepository.existsById(customerId))
+                throw new CustomException(404, "Customer not found");
+            customerRepository.deleteById(customerId);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to delete customer {}: {}", customerId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to delete customer");
+        }
     }
 }
