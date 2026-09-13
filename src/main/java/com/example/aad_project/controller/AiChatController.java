@@ -59,7 +59,7 @@ public class AiChatController {
     private AiChatService aiChatService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER','GUEST','ADMIN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER','DRIVER','ADMIN')")
     public ResponseEntity<CommonResponse> chat(
             @Valid @RequestBody ChatRequestDTO requestDto,
             Authentication authentication) {
