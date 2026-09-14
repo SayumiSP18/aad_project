@@ -22,42 +22,77 @@ public class ZoneServiceImpl implements ZoneService {
 
     @Override
     public void saveZone(ZoneCreateRequestDTO request) {
-        Zone zone = new Zone();
-        zone.setZoneName(request.getZoneName());
-        zoneRepository.save(zone);
-        log.info("New zone created: {}", zone.getZoneName());
+        try {
+            Zone zone = new Zone();
+            zone.setZoneName(request.getZoneName());
+            zoneRepository.save(zone);
+            log.info("New zone created: {}", zone.getZoneName());
+        } catch (Exception e) {
+            log.error("Failed to save zone '{}': {}", request.getZoneName(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to create zone");
+        }
     }
 
     @Override
     public List<ZoneResponseDTO> getAllZones() {
-        return zoneRepository.getAllZones();
+        try {
+            return zoneRepository.getAllZones();
+        } catch (Exception e) {
+            log.error("Failed to fetch zones: {}", e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch zones");
+        }
     }
 
     @Override
     public List<ZoneResponseDTO> filterZones(String zoneName) {
-        return zoneRepository.filterZones(zoneName);
+        try {
+            return zoneRepository.filterZones(zoneName);
+        } catch (Exception e) {
+            log.error("Failed to filter zones by name '{}': {}", zoneName, e.getMessage(), e);
+            throw new CustomException(500, "Failed to filter zones");
+        }
     }
 
     @Override
     public ZoneResponseDTO selectZone(long zoneId) {
-        return zoneRepository.selectZone(zoneId)
-                .orElseThrow(() -> new CustomException(404, "Zone not found"));
+        try {
+            return zoneRepository.selectZone(zoneId)
+                    .orElseThrow(() -> new CustomException(404, "Zone not found"));
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to fetch zone {}: {}", zoneId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch zone");
+        }
     }
-
 
     @Override
     public void updateZone(ZoneUpdateRequestDTO request) {
-        Zone zone = zoneRepository.findById(request.getZoneId())
-                .orElseThrow(() -> new CustomException(404, "Zone not found"));
+        try {
+            Zone zone = zoneRepository.findById(request.getZoneId())
+                    .orElseThrow(() -> new CustomException(404, "Zone not found"));
 
-        zone.setZoneName(request.getZoneName());
-        zoneRepository.save(zone);
+            zone.setZoneName(request.getZoneName());
+            zoneRepository.save(zone);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to update zone {}: {}", request.getZoneId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to update zone");
+        }
     }
 
     @Override
     public void deleteZone(long zoneId) {
-        if (!zoneRepository.existsById(zoneId))
-            throw new CustomException(404, "Zone not found");
-        zoneRepository.deleteById(zoneId);
+        try {
+            if (!zoneRepository.existsById(zoneId))
+                throw new CustomException(404, "Zone not found");
+            zoneRepository.deleteById(zoneId);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to delete zone {}: {}", zoneId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to delete zone");
+        }
     }
 }

@@ -23,55 +23,93 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public void saveRate(RateDTO rateDTO) {
-        Zone zone = zoneRepository.findById(rateDTO.getZoneId())
-                .orElseThrow(() -> new CustomException(404, "Zone not found"));
+        try {
+            Zone zone = zoneRepository.findById(rateDTO.getZoneId())
+                    .orElseThrow(() -> new CustomException(404, "Zone not found"));
 
-        Rate rate = new Rate();
-        rate.setZone(zone);
-        rate.setWeightFrom(rateDTO.getWeightFrom());
-        rate.setWeightTo(rateDTO.getWeightTo());
-        rate.setPricePerKg(rateDTO.getPricePerKg());
-        rateRepository.save(rate);
-        log.info("New rate created for zone: {}", zone.getZoneName());
+            Rate rate = new Rate();
+            rate.setZone(zone);
+            rate.setWeightFrom(rateDTO.getWeightFrom());
+            rate.setWeightTo(rateDTO.getWeightTo());
+            rate.setPricePerKg(rateDTO.getPricePerKg());
+            rateRepository.save(rate);
+            log.info("New rate created for zone: {}", zone.getZoneName());
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to save rate for zone {}: {}", rateDTO.getZoneId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to create rate");
+        }
     }
 
     @Override
     public List<RateDTO> getAllRates() {
-        return rateRepository.getAllRates();
+        try {
+            return rateRepository.getAllRates();
+        } catch (Exception e) {
+            log.error("Failed to fetch rates: {}", e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch rates");
+        }
     }
 
     @Override
     public List<RateDTO> filterRates(Long zoneId) {
-        return rateRepository.filterRates(zoneId);
+        try {
+            return rateRepository.filterRates(zoneId);
+        } catch (Exception e) {
+            log.error("Failed to filter rates by zone {}: {}", zoneId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to filter rates");
+        }
     }
 
     @Override
     public RateDTO selectRate(long rateId) {
-        return rateRepository.selectRate(rateId)
-                .orElseThrow(() -> new CustomException(404, "Rate not found"));
+        try {
+            return rateRepository.selectRate(rateId)
+                    .orElseThrow(() -> new CustomException(404, "Rate not found"));
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to fetch rate {}: {}", rateId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch rate");
+        }
     }
 
     @Override
     public void updateRate(RateDTO rateDTO) {
-        Rate rate = rateRepository.findById(rateDTO.getRateId())
-                .orElseThrow(() -> new CustomException(404, "Rate not found"));
+        try {
+            Rate rate = rateRepository.findById(rateDTO.getRateId())
+                    .orElseThrow(() -> new CustomException(404, "Rate not found"));
 
-        if (rateDTO.getZoneId() != null) {
-            Zone zone = zoneRepository.findById(rateDTO.getZoneId())
-                    .orElseThrow(() -> new CustomException(404, "Zone not found"));
-            rate.setZone(zone);
+            if (rateDTO.getZoneId() != null) {
+                Zone zone = zoneRepository.findById(rateDTO.getZoneId())
+                        .orElseThrow(() -> new CustomException(404, "Zone not found"));
+                rate.setZone(zone);
+            }
+
+            rate.setWeightFrom(rateDTO.getWeightFrom());
+            rate.setWeightTo(rateDTO.getWeightTo());
+            rate.setPricePerKg(rateDTO.getPricePerKg());
+            rateRepository.save(rate);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to update rate {}: {}", rateDTO.getRateId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to update rate");
         }
-
-        rate.setWeightFrom(rateDTO.getWeightFrom());
-        rate.setWeightTo(rateDTO.getWeightTo());
-        rate.setPricePerKg(rateDTO.getPricePerKg());
-        rateRepository.save(rate);
     }
 
     @Override
     public void deleteRate(long rateId) {
-        if (!rateRepository.existsById(rateId))
-            throw new CustomException(404, "Rate not found");
-        rateRepository.deleteById(rateId);
+        try {
+            if (!rateRepository.existsById(rateId))
+                throw new CustomException(404, "Rate not found");
+            rateRepository.deleteById(rateId);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to delete rate {}: {}", rateId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to delete rate");
+        }
     }
 }

@@ -1,4 +1,3 @@
-
 {
   "app.title": "Courier Delivery System",
 
@@ -31,7 +30,7 @@
   "register.licenseNumber": "License Number",
   "register.submit": "Register",
   "register.success": "Registration successful",
-
+  "register.loginLink": "Login",
 
   "nav.analytics": "Analytics",
   "nav.manageRecords": "Manage Records",
@@ -57,15 +56,11 @@
   "modal.addRecord": "Add Record",
   "login.pageTitle": "Courier Service Login",
 
-
-
-
   "dashboard.welcome": "Welcome back",
   "dashboard.totalDeliveries": "Total Deliveries",
   "dashboard.activeDrivers": "Active Drivers",
   "dashboard.pendingDeliveries": "Pending Deliveries",
   "dashboard.completedToday": "Completed Today",
-
 
   "sidebar.customer": "Customer",
   "sidebar.driver": "Driver",
@@ -74,7 +69,6 @@
   "notifications.title": "Notifications",
   "deliveries.myDeliveries": "My Deliveries",
   "common.logout": "Logout",
-
 
   "parcels.title": "My Parcels",
   "profile.title": "My Profile",
@@ -88,8 +82,6 @@
   "parcels.weight": "Weight",
   "parcels.receiver": "Receiver",
   "parcels.status": "Status",
-
-
 
   "deliveries.title": "Deliveries",
   "deliveries.addNew": "New Delivery",
@@ -159,7 +151,6 @@
   "errors.unauthorized": "You are not authorized to perform this action.",
   "errors.notFound": "The requested resource was not found.",
   "errors.validation": "Please check the highlighted fields.",
-
 
   "common.id": "ID",
   "common.name": "Name",

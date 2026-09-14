@@ -25,74 +25,119 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public void saveDelivery(DeliveryDTO deliveryDTO) {
-        if (deliveryRepository.findByParcel_ParcelId(deliveryDTO.getParcelId()).isPresent())
-            throw new CustomException(409, "Delivery already assigned for this parcel");
+        try {
+            if (deliveryRepository.findByParcel_ParcelId(deliveryDTO.getParcelId()).isPresent())
+                throw new CustomException(409, "Delivery already assigned for this parcel");
 
-        Parcel parcel = parcelRepository.findById(deliveryDTO.getParcelId())
-                .orElseThrow(() -> new CustomException(404, "Parcel not found"));
-        Driver driver = driverRepository.findById(deliveryDTO.getDriverId())
-                .orElseThrow(() -> new CustomException(404, "Driver not found"));
-        Vehicle vehicle = vehicleRepository.findById(deliveryDTO.getVehicleId())
-                .orElseThrow(() -> new CustomException(404, "Vehicle not found"));
+            Parcel parcel = parcelRepository.findById(deliveryDTO.getParcelId())
+                    .orElseThrow(() -> new CustomException(404, "Parcel not found"));
+            Driver driver = driverRepository.findById(deliveryDTO.getDriverId())
+                    .orElseThrow(() -> new CustomException(404, "Driver not found"));
+            Vehicle vehicle = vehicleRepository.findById(deliveryDTO.getVehicleId())
+                    .orElseThrow(() -> new CustomException(404, "Vehicle not found"));
 
-        Delivery delivery = new Delivery();
-        delivery.setParcel(parcel);
-        delivery.setDriver(driver);
-        delivery.setVehicle(vehicle);
+            Delivery delivery = new Delivery();
+            delivery.setParcel(parcel);
+            delivery.setDriver(driver);
+            delivery.setVehicle(vehicle);
 
-        if (deliveryDTO.getRouteId() != null) {
-            Route route = routeRepository.findById(deliveryDTO.getRouteId())
-                    .orElseThrow(() -> new CustomException(404, "Route not found"));
-            delivery.setRoute(route);
+            if (deliveryDTO.getRouteId() != null) {
+                Route route = routeRepository.findById(deliveryDTO.getRouteId())
+                        .orElseThrow(() -> new CustomException(404, "Route not found"));
+                delivery.setRoute(route);
+            }
+
+            delivery.setStatus(ParcelStatus.OUT_FOR_DELIVERY);
+            deliveryRepository.save(delivery);
+            log.info("New delivery assigned for parcel: {}", parcel.getTrackingNo());
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to save delivery for parcel {}: {}", deliveryDTO.getParcelId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to assign delivery");
         }
-
-        delivery.setStatus(ParcelStatus.OUT_FOR_DELIVERY);
-        deliveryRepository.save(delivery);
-        log.info("New delivery assigned for parcel: {}", parcel.getTrackingNo());
     }
 
     @Override
     public List<DeliveryDTO> getAllDeliveries() {
-        return deliveryRepository.getAllDeliveries();
+        try {
+            return deliveryRepository.getAllDeliveries();
+        } catch (Exception e) {
+            log.error("Failed to fetch deliveries: {}", e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch deliveries");
+        }
     }
 
     @Override
     public List<DeliveryDTO> filterDeliveries(Long driverId) {
-        return deliveryRepository.filterDeliveries(driverId);
+        try {
+            return deliveryRepository.filterDeliveries(driverId);
+        } catch (Exception e) {
+            log.error("Failed to filter deliveries by driver {}: {}", driverId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to filter deliveries");
+        }
     }
 
     @Override
     public DeliveryDTO selectDelivery(long deliveryId) {
-        return deliveryRepository.selectDelivery(deliveryId)
-                .orElseThrow(() -> new CustomException(404, "Delivery not found"));
+        try {
+            return deliveryRepository.selectDelivery(deliveryId)
+                    .orElseThrow(() -> new CustomException(404, "Delivery not found"));
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to fetch delivery {}: {}", deliveryId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to fetch delivery");
+        }
     }
 
     @Override
     public void updateDelivery(DeliveryDTO deliveryDTO) {
-        Delivery delivery = deliveryRepository.findById(deliveryDTO.getDeliveryId())
-                .orElseThrow(() -> new CustomException(404, "Delivery not found"));
+        try {
+            Delivery delivery = deliveryRepository.findById(deliveryDTO.getDeliveryId())
+                    .orElseThrow(() -> new CustomException(404, "Delivery not found"));
 
-        if (deliveryDTO.getStatus() != null)
-            delivery.setStatus(deliveryDTO.getStatus());
+            if (deliveryDTO.getStatus() != null)
+                delivery.setStatus(deliveryDTO.getStatus());
 
-        if (deliveryDTO.getDeliveredAt() != null)
-            delivery.setDeliveredAt(deliveryDTO.getDeliveredAt());
+            if (deliveryDTO.getDeliveredAt() != null)
+                delivery.setDeliveredAt(deliveryDTO.getDeliveredAt());
 
-        deliveryRepository.save(delivery);
+            deliveryRepository.save(delivery);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to update delivery {}: {}", deliveryDTO.getDeliveryId(), e.getMessage(), e);
+            throw new CustomException(500, "Failed to update delivery");
+        }
     }
 
     public void updateDeliveryStatus(long deliveryId, ParcelStatus status) {
-        Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new CustomException(404, "Delivery not found"));
+        try {
+            Delivery delivery = deliveryRepository.findById(deliveryId)
+                    .orElseThrow(() -> new CustomException(404, "Delivery not found"));
 
-        delivery.setStatus(status);
-        deliveryRepository.save(delivery);
+            delivery.setStatus(status);
+            deliveryRepository.save(delivery);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to update status for delivery {}: {}", deliveryId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to update delivery status");
+        }
     }
 
     @Override
     public void deleteDelivery(long deliveryId) {
-        if (!deliveryRepository.existsById(deliveryId))
-            throw new CustomException(404, "Delivery not found");
-        deliveryRepository.deleteById(deliveryId);
+        try {
+            if (!deliveryRepository.existsById(deliveryId))
+                throw new CustomException(404, "Delivery not found");
+            deliveryRepository.deleteById(deliveryId);
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            log.error("Failed to delete delivery {}: {}", deliveryId, e.getMessage(), e);
+            throw new CustomException(500, "Failed to delete delivery");
+        }
     }
 }

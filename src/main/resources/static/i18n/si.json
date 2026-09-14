@@ -30,16 +30,37 @@
   "register.licenseNumber": "බලපත්‍ර අංකය",
   "register.submit": "ලියාපදිංචි වන්න",
   "register.success": "ලියාපදිංචිය සාර්ථකයි",
+  "register.loginLink": "පිවිසෙන්න",
+
+  "nav.analytics": "විශ්ලේෂණ",
+  "nav.manageRecords": "වාර්තා කළමනාකරණය",
+
+  "nav.overview": "දළ විශ්ලේෂණය",
+  "dashboard.analyticsTitle": "විශ්ලේෂණ පුවරුව",
+  "common.loggedInAs": "ලෙස පිවිසී ඇත",
+  "charts.byStatus": "තත්ත්වය අනුව බෙදාහැරීම්",
+  "charts.dailyVolume": "දෛනික බෙදාහැරීම් ප්‍රමාණය (දින 14)",
+  "charts.topDrivers": "ඉහළම රියදුරන් 5",
+  "charts.completedDeliveries": "සම්පූර්ණ කළ බෙදාහැරීම්",
+  "charts.deliveries": "බෙදාහැරීම්",
+  "charts.branchLoad": "ශාඛා අනුව බර",
+  "register.pageTitle": "ලියාපදිංචිය",
+  "register.tabCustomer": "පාරිභෝගිකයා",
+  "register.tabDriver": "රියදුරු",
+  "login.usernamePlaceholder": "ඔබගේ පරිශීලක නාමය ඇතුළත් කරන්න",
+  "login.passwordPlaceholder": "ඔබගේ මුරපදය ඇතුළත් කරන්න",
+  "register.haveAccount": "දැනටමත් ගිණුමක් තිබේද?",
+  "errors.credentialsRequired": "කරුණාකර පරිශීලක නාමය සහ මුරපදය ඇතුළත් කරන්න",
+  "errors.fullNameAddressRequired": "සම්පූර්ණ නම සහ ලිපිනය අවශ්‍යයි",
+  "errors.licenseBranchRequired": "බලපත්‍ර අංකය සහ ශාඛාව අවශ්‍යයි",
+  "modal.addRecord": "වාර්තාව එකතු කරන්න",
+  "login.pageTitle": "බෙදාහැරීම් සේවා පිවිසුම",
 
   "dashboard.welcome": "නැවත සාදරයෙන් පිළිගනිමු",
   "dashboard.totalDeliveries": "සම්පූර්ණ බෙදාහැරීම්",
   "dashboard.activeDrivers": "සක්‍රීය රියදුරන්",
   "dashboard.pendingDeliveries": "පොරොත්තු බෙදාහැරීම්",
   "dashboard.completedToday": "අද සම්පූර්ණ කළ",
-
-  "nav.analytics": "විශ්ලේෂණ",
-  "nav.manageRecords": "වාර්තා කළමනාකරණය",
-
 
   "sidebar.customer": "පාරිභෝගිකයා",
   "sidebar.driver": "රියදුරු",
@@ -48,8 +69,6 @@
   "notifications.title": "දැනුම්දීම්",
   "deliveries.myDeliveries": "මගේ බෙදාහැරීම්",
   "common.logout": "පිටවීම",
-
-
 
   "parcels.title": "මගේ පාර්සල්",
   "profile.title": "මගේ පැතිකඩ",
@@ -63,9 +82,6 @@
   "parcels.weight": "බර",
   "parcels.receiver": "ලබන්නා",
   "parcels.status": "තත්ත්වය",
-
-
-
 
   "deliveries.title": "බෙදාහැරීම්",
   "deliveries.addNew": "නව බෙදාහැරීමක්",
@@ -135,7 +151,6 @@
   "errors.unauthorized": "මෙම ක්‍රියාව සිදු කිරීමට ඔබට අවසර නැත.",
   "errors.notFound": "ඉල්ලූ දෙය හමු නොවීය.",
   "errors.validation": "සලකුණු කළ ක්ෂේත්‍ර පරීක්ෂා කරන්න.",
-
 
   "common.id": "අංකය",
   "common.name": "නම",
