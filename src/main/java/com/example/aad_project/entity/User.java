@@ -27,6 +27,9 @@ public class User {
 //    private String email;
 //    private String phone;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role userRoles;

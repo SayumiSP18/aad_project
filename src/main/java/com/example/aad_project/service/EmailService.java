@@ -7,5 +7,5 @@ public interface EmailService {
     void sendHtmlEmail(String to, String subject, String htmlBody);
 
 
-
+    void sendDriverRegistrationEmail(String email, String username);
 }

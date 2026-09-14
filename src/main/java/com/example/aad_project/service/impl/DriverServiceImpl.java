@@ -283,6 +283,7 @@ import com.example.aad_project.repository.BranchRepository;
 import com.example.aad_project.repository.DriverRepository;
 import com.example.aad_project.repository.UserRepository;
 import com.example.aad_project.service.DriverService;
+import com.example.aad_project.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -304,6 +305,7 @@ public class DriverServiceImpl implements DriverService {
     private final BranchRepository branchRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final EmailService emailService;
 
     @Override
     public void registerDriver(DriverRegisterDTO registerDTO) {
@@ -322,6 +324,7 @@ public class DriverServiceImpl implements DriverService {
             User user = new User();
             user.setUsername(registerDTO.getUsername());
             user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+            user.setEmail(registerDTO.getEmail());
             Role driverRole = roleRepository.findByRoleName("DRIVER")
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND, "DRIVER role not found"
@@ -339,6 +342,13 @@ public class DriverServiceImpl implements DriverService {
             driverRepository.save(driver);
 
             log.info("Driver registered successfully: {}", savedUser.getUsername());
+
+            // fire welcome email, non-blocking, won't break registration if SMTP fails
+            emailService.sendDriverRegistrationEmail(
+                    savedUser.getEmail(),
+                    savedUser.getUsername()
+            );
+
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {

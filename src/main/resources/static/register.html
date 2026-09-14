@@ -50,6 +50,9 @@
         </div>
 
         <div id="driverFields" style="display:none;">
+            <label for="driverEmail" data-i18n="register.email">Email</label>
+            <input type="email" id="driverEmail">
+
             <label for="licenseNo" data-i18n="register.licenseNumber">License No</label>
             <input type="text" id="licenseNo">
 
@@ -109,14 +112,15 @@
             url = "/v1/customers/register";
             payload = { username, password, fullName, address };
         } else {
+            const email = $('#driverEmail').val().trim();
             const licenseNo = $('#licenseNo').val().trim();
             const branchId = $('#branchId').val();
-            if (!licenseNo || !branchId) {
+            if (!email || !licenseNo || !branchId) {
                 $('#errMsg').text(t('errors.licenseBranchRequired'));
                 return;
             }
             url = "/v1/drivers/register";
-            payload = { username, password, licenseNo, branchId: Number(branchId) };
+            payload = { username, password, email, licenseNo, branchId: Number(branchId) };
         }
 
         apiCall("POST", url, payload)

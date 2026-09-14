@@ -14,15 +14,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EmailServiceImpl {
+public class EmailServiceImpl implements EmailService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final JavaMailSender mailSender;
 
     @Value("${app.mail.from}")
     private String fromAddress;
 
+    @Override
     @Async("emailExecutor")
     public void sendOrderConfirmationEmail(String toEmail, String customerName,
                                            Long orderId, String pickupAddress,
@@ -32,6 +33,7 @@ public class EmailServiceImpl {
         sendHtmlEmail(toEmail, subject, body);
     }
 
+    @Override
     @Async("emailExecutor")
     public void sendDriverAssignmentEmail(String toEmail, String driverName,
                                           Long orderId, String pickupAddress,
@@ -41,7 +43,8 @@ public class EmailServiceImpl {
         sendHtmlEmail(toEmail, subject, body);
     }
 
-    private void sendHtmlEmail(String to, String subject, String htmlBody) {
+    @Override
+    public void sendHtmlEmail(String to, String subject, String htmlBody) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -52,11 +55,25 @@ public class EmailServiceImpl {
             mailSender.send(message);
             logger.info("Email sent successfully to {} with subject '{}'", to, subject);
         } catch (MessagingException e) {
-            // IMPORTANT: never let email failure break the main transaction
             logger.error("Failed to send email to {}: {}", to, e.getMessage());
         } catch (Exception e) {
             logger.error("Unexpected error sending email to {}: {}", to, e.getMessage());
         }
+    }
+
+    @Override
+    @Async("emailExecutor")
+    public void sendDriverRegistrationEmail(String toEmail, String username) {
+        String subject = "Welcome to Courier Service - Driver Account Created";
+        String body = """
+            <div style="font-family: Arial, sans-serif; max-width:600px; margin:auto;">
+                <h2 style="color:#2c3e50;">Welcome, %s! 🚚</h2>
+                <p>Your driver account has been created successfully.</p>
+                <p>You can now log in and start accepting deliveries.</p>
+                <p style="color:#888; font-size:12px;">This is an automated message from the Courier Delivery System.</p>
+            </div>
+            """.formatted(username);
+        sendHtmlEmail(toEmail, subject, body);
     }
 
     private String buildOrderConfirmationHtml(String customerName, Long orderId,
