@@ -249,10 +249,26 @@ const ENTITIES = {
         ]
     },
 
+    // user: {
+    //     titleKey: "entity.user.title", singularKey: "entity.user.singular", idField: "userId", noCreate: true,
+    //     listUrl: "/v1/users/all", filterUrl: "/v1/users/filter", filterParam: "username",
+    //     updateUrl: "/v1/users/update", deleteUrlPrefix: "/v1/users/",
+    //     columns: [
+    //         { key: "userId", label: "common.id" }, { key: "username", label: "common.username" },
+    //         { key: "userRoles", label: "field.role" }
+    //     ],
+    //     formFields: [
+    //         { key: "username", label: "common.username", type: "text", required: true },
+    //         { key: "userRoles", label: "field.role", type: "select", optionsFrom: "role", optionsValue: "roleName", optionsLabel: "roleName", required: true },
+    //         { key: "password", label: "field.newPasswordOptional", type: "password" }
+    //     ]
+    // },
+
+
     user: {
         titleKey: "entity.user.title", singularKey: "entity.user.singular", idField: "userId", noCreate: true,
-        listUrl: "/v1/users/all", filterUrl: "/v1/users/filter", filterParam: "username",
-        updateUrl: "/v1/users/update", deleteUrlPrefix: "/v1/users/",
+        listUrl: "/v1/login/users", filterUrl: "/v1/login/filter-users", filterParam: "userName",
+        updateUrl: "/v1/login/update-user", deleteUrlPrefix: "/v1/login/",
         columns: [
             { key: "userId", label: "common.id" }, { key: "username", label: "common.username" },
             { key: "userRoles", label: "field.role" }
@@ -263,6 +279,9 @@ const ENTITIES = {
             { key: "password", label: "field.newPasswordOptional", type: "password" }
         ]
     },
+
+
+
 
     role: {
         titleKey: "entity.role.title", singularKey: "entity.role.singular", idField: "roleId", noUpdate: true,

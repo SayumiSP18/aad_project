@@ -13,6 +13,15 @@
  *
  * Language changes fire a 'languageChanged' event on document, so any
  * screen that renders tables from API data can re-render on that event.
+ *
+ * IMPORTANT: loadLanguage() is async (it fetches JSON over the network),
+ * so any other script that calls t() on page load — e.g. app.js building
+ * a sidebar from ENTITIES — must wait for the dictionaries to actually be
+ * loaded first, or every t() call will fail with "missing key in all
+ * dictionaries" (currentTranslations/fallbackTranslations are still {}).
+ * `window.i18nReady` is a promise that resolves once the first language
+ * load completes; consumers should do `window.i18nReady.then(() => {...})`
+ * before calling t() on initial page load.
  */
 
 const SUPPORTED_LANGUAGES = ['en', 'si'];
@@ -22,6 +31,11 @@ const STORAGE_KEY = 'preferredLang';
 let currentLang = DEFAULT_LANGUAGE;
 let currentTranslations = {};
 let fallbackTranslations = {};
+
+// Resolved once the first loadLanguage() call completes successfully.
+// Other scripts can do: window.i18nReady.then(() => { ...calls to t()... })
+let _resolveI18nReady;
+window.i18nReady = new Promise((resolve) => { _resolveI18nReady = resolve; });
 
 /**
  * Load a language dictionary and apply it to the page.
@@ -57,6 +71,12 @@ async function loadLanguage(lang) {
         document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
     } catch (err) {
         console.error(`i18n: failed to load "${lang}" — staying on ${currentLang}`, err);
+    } finally {
+        // Resolve exactly once, even on failure, so waiting code doesn't hang forever.
+        if (_resolveI18nReady) {
+            _resolveI18nReady();
+            _resolveI18nReady = null;
+        }
     }
 }
 

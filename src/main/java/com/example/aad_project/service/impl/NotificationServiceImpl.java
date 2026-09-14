@@ -82,8 +82,25 @@ public class NotificationServiceImpl implements NotificationService {
             Notification notification = notificationRepository.findById(notificationDTO.getNotificationId())
                     .orElseThrow(() -> new CustomException(404, "Notification not found"));
 
+            // Previous version only ever updated isRead — userId/message from the edit
+            // form were silently discarded, so reassigning a notification to a
+            // different user (or editing its message) always appeared to succeed
+            // but never actually changed anything.
+            if (notificationDTO.getUserId() != null
+                    && (notification.getUser() == null
+                    || !notificationDTO.getUserId().equals(notification.getUser().getUserId()))) {
+                User user = userRepository.findById(notificationDTO.getUserId())
+                        .orElseThrow(() -> new CustomException(404, "User not found"));
+                notification.setUser(user);
+            }
+
+            if (notificationDTO.getMessage() != null && !notificationDTO.getMessage().isBlank()) {
+                notification.setMessage(notificationDTO.getMessage());
+            }
+
             notification.setRead(notificationDTO.isRead());
             notificationRepository.save(notification);
+            log.info("Notification {} updated", notificationDTO.getNotificationId());
         } catch (CustomException ce) {
             throw ce;
         } catch (Exception e) {

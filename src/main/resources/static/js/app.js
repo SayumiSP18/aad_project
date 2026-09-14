@@ -14,10 +14,17 @@ $(function () {
     requireRole(["ADMIN", "STAFF"]);
     $("#topUsername").text(localStorage.getItem("username") || "");
     $("#topRole").text(localStorage.getItem("role") || "");
-    buildSidebar();
 
-    const firstKey = Object.keys(ENTITIES)[0];
-    selectEntity(firstKey);
+    // buildSidebar()/selectEntity() call t() to resolve nav/entity labels, but
+    // i18n.js loads its dictionaries asynchronously (fetch). Calling them here
+    // directly races the dictionary load and produces "missing key in all
+    // dictionaries" warnings on first page load. window.i18nReady resolves
+    // once the first loadLanguage() call has finished, so wait for it first.
+    window.i18nReady.then(function () {
+        buildSidebar();
+        const firstKey = Object.keys(ENTITIES)[0];
+        selectEntity(firstKey);
+    });
 
     $("#logoutBtn").on("click", function () {
         localStorage.clear();
