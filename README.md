@@ -200,3 +200,27 @@ Every endpoint returns a `CommonResponse`:
 ```
  
 ---
+
+
+## 📸 Screenshots
+
+### Login page(sign-in)
+![Screen 1](docs/screenshots/img.png)
+
+### Register page - Driver(sign-up)
+![Screen 2](docs/screenshots/img_1.png)
+
+### Admin Analytics Dashboard
+![Screen 3](docs/screenshots/img_2.png)
+
+### Admin Dashboard(lang translated)
+![Screen 4](docs/screenshots/img_3.png)
+
+### Customer Panel(with AI chatbot implemented)
+![Screen 5](docs/screenshots/img_4.png)
+
+### Driver Panel
+![Screen 6](docs/screenshots/img_5.png)
+
+### Mail of successful Driver Registration
+![Screen 7](docs/screenshots/Screenshot%202026-09-14%20235342.png)
