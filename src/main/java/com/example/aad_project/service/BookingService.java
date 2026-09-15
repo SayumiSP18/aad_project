@@ -5,7 +5,7 @@ import com.example.aad_project.dto.BookingDTO;
 import java.util.List;
 
 public interface BookingService {
-    void saveBooking(BookingDTO bookingDTO);
+    BookingDTO saveBooking(BookingDTO bookingDTO);
 
     List<BookingDTO> getAllBookings();
 

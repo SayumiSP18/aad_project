@@ -30,7 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public void registerCustomer(CustomerRegisterDTO registerDTO) {
+    public CustomerDTO registerCustomer(CustomerRegisterDTO registerDTO) {
         try {
             if (userRepository.findByUsername(registerDTO.getUsername()).isPresent())
                 throw new CustomException(409, "Username already taken");
@@ -51,6 +51,9 @@ public class CustomerServiceImpl implements CustomerService {
             customerRepository.save(customer);
 
             log.info("New customer registered: {}", user.getUsername());
+
+            return new CustomerDTO(customer.getCustomerId(), user.getUserId(), user.getUsername(),
+                    customer.getFullName(), customer.getAddress());
         } catch (CustomException ce) {
             throw ce;
         } catch (Exception e) {

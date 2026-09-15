@@ -20,8 +20,8 @@ public class BookingController {
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResponse saveBooking(@Valid @RequestBody BookingDTO bookingDTO) {
-        bookingService.saveBooking(bookingDTO);
-        return new CommonResponse(0, "Booking created successfully");
+        BookingDTO dto = bookingService.saveBooking(bookingDTO);
+        return new CommonResponse(0, dto, "Booking created successfully");
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)

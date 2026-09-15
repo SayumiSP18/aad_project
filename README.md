@@ -224,3 +224,7 @@ Every endpoint returns a `CommonResponse`:
 
 ### Mail of successful Driver Registration
 ![Screen 7](docs/screenshots/Screenshot%202026-09-14%20235342.png)
+
+
+### Postman testing 
+![Screen 7](docs/screenshots/img_7.png)

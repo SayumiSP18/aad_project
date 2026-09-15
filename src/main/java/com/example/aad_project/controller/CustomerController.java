@@ -23,8 +23,8 @@ public class CustomerController {
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResponse register(@Valid @RequestBody CustomerRegisterDTO registerDTO) {
-        customerService.registerCustomer(registerDTO);
-        return new CommonResponse(0, "Customer registered successfully");
+        CustomerDTO dto = customerService.registerCustomer(registerDTO);
+        return new CommonResponse(0, dto, "Customer registered successfully");
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)

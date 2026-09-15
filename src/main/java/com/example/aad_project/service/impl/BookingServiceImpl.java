@@ -26,7 +26,7 @@ public class BookingServiceImpl implements BookingService {
     private final BranchRepository branchRepository;
 
     @Override
-    public void saveBooking(BookingDTO bookingDTO) {
+    public BookingDTO saveBooking(BookingDTO bookingDTO) {
         try {
             if (bookingRepository.findByParcel_ParcelId(bookingDTO.getParcelId()).isPresent())
                 throw new CustomException(409, "Parcel is already booked");
@@ -43,6 +43,11 @@ public class BookingServiceImpl implements BookingService {
             booking.setEstimatedCost(bookingDTO.getEstimatedCost());
             bookingRepository.save(booking);
             log.info("New booking created for parcel: {}", parcel.getTrackingNo());
+
+            return new BookingDTO(booking.getBookingId(), parcel.getParcelId(), parcel.getTrackingNo(),
+                    branch.getBranchId(), branch.getName(), booking.getBookingDate(),
+                    booking.getEstimatedCost());
+
         } catch (CustomException ce) {
             throw ce;
         } catch (Exception e) {
