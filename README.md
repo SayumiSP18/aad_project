@@ -228,3 +228,15 @@ Every endpoint returns a `CommonResponse`:
 
 ### Postman testing 
 ![Screen 7](docs/screenshots/img_7.png)
+
+
+-----
+
+## System Architecture (Use case)
+![System Architecture](docs/use_case_aad.drawio.png)
+
+## ER diagram
+
+
+
+## Class diagram

@@ -24,4 +24,5 @@ public class CustomerRegisterDTO {
     private String fullName;
 
     @NotBlank(message = "Address is required")
-    private String address;}
+    private String address;
+}
