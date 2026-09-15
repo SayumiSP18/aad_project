@@ -233,7 +233,7 @@ Every endpoint returns a `CommonResponse`:
 -----
 
 ## System Architecture (Use case)
-![System Architecture](docs/use_case_aad.drawio.png)
+![System Architecture](docs/aad_use_case.drawio.png)
 
 ## ER diagram
 
